@@ -1,0 +1,3 @@
+run for fastjson97ee7b6test_for_issue5 using this below command in the extracted flakyguard_jacoco_coverage.zip folder::
+
+python3 flakyguard.py --repo fastjson --test-file src/test/java/com/alibaba/json/bvt/issue_1400/Issue1480.java --test-func test_for_issue --test-case test_for_issue --language java --repro-script single_runner.sh --repro-config-csv test_config.csv --repro-issue-id fastjson97ee7b6test_for_issue5 --use-jacoco-coverage --runner "mvn edu.illinois:nondex-maven-plugin:2.1.1:nondex -Dtest=com.alibaba.json.bvt.issue_1400.Issue1480#test_for_issue -DnondexRuns=1 -DnondexSeed=933178" --runs 20 --validation-runs 10
