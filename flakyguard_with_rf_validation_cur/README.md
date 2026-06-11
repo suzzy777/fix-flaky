@@ -8,5 +8,8 @@ run for dubbo OD using:
 python3 flakyguard.py --repo dubbo/dubbo-rpc/dubbo-rpc-dubbo --test-file src/test/java/org/apache/dubbo/rpc/protocol/dubbo/telnet/ChangeTelnetHandlerTest.java --test-func testChangeServiceNotExport --test-case testChangeServiceNotExport --language java --repro-script single_runner.sh --repro-config-csv test_config.csv --repro-issue-id dubbodubborpcdubborpcdubboaa9f16e --use-jacoco-coverage --con\
 text-attempts 3 --thoughts-per-context 2 --fixes-per-thought 3 > od_run_dubbodubborpcdubborpcdubboaa9f16e.log
 
+Download and extract fastjson and dubbo from here: https://drive.google.com/file/d/13QL-G2rWPwD3hJP5O4t13AU0T7rDW_fG/view?usp=sharing
+Keep them in root from where you will run flakyguard. It is required for the graph creation step.  
+
 If you want to try on a new project from the test_config.csv, look in github to clone the projects for now. The SHA can be found in the last part of the container name in the command (dubbodubborpcdubborpcdubboaa9f16e). 
 You need to clone the new project in the same directory, checkout to the required SHA for the graph part and give that location above in --repo argument. 
