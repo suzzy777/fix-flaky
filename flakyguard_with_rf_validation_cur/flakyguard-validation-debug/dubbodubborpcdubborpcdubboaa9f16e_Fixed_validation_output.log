@@ -1,0 +1,6 @@
+patching file dubbo-rpc/dubbo-rpc-dubbo/src/test/java/org/apache/dubbo/rpc/protocol/dubbo/telnet/ChangeTelnetHandlerTest.java
+6ab3feadcfb60b66751aff40a214c908b7405b73aec9060cbac6302476714be9
+^Cdubbodubborpcdubborpcdubboaa9f16e
+dubbodubborpcdubborpcdubboaa9f16e
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+cp: cannot stat 'data/dubbodubborpcdubborpcdubboaa9f16e/Fixed/flaky-result/.': No such file or directory

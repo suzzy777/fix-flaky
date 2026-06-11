@@ -1,0 +1,13 @@
+
+[1/3] Reproducing flaky failure (script issue_id=dubbodubborpcdubborpcdubboaa9f16e)…
+✓ Failure reproduced.
+  Error: [ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.193 s <<< FAILURE! - in org.apache.dubbo.rpc.p
+
+[2/3] Running fixing pipeline (M=3, P=2, N=3, candidates=18)…
+
+[3/3] Result:
+✓ Fix found and validated.
+  Root cause: The test `testChangeServiceNotExport` was failing because it expected "No such service demo" but received "Used the demo as default." This flakiness occurs due to shared state in the singleton `DubboProtocol` instance. When tests like `testChangeSimpleName`, `testChangeName`, or `testChangePath` run before `testChangeServiceNotExport`, they export the `mockInvoker` service, which remains in DubboProtocol's internal registry even after the test completes.
+
+The fix adds explicit cleanup in the `@After` method to unexport the `mockInvoker` before calling `ProtocolUtils.closeAll()`. This ensures that each test starts with a clean DubboProtocol state, preventing exported services from one test from affecting subsequent tests. The try-catch block handles cases where the invoker wasn't exported (avoiding exceptions in tests that don't export services). This minimal change ensures proper test isolation without modifying test logic or assertions.
+  Patch saved to: /home/srafi/flakyguard/flakyguard_csv_repro_clean/dubbo/dubbo-rpc/dubbo-rpc-dubbo/patches/
