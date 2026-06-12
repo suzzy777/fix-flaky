@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 _PROVIDER = os.getenv("FLAKYGUARD_LLM_PROVIDER", "openai").lower()
 _MODEL_DEFAULT = {
     "openai": "gpt-4o-mini",
-    "anthropic": "claude-sonnet-4-5",
+    "anthropic": "claude-sonnet-4-6",
     #"anthropic": "claude-sonnet-4-6"
 }
 MODEL = os.getenv("FLAKYGUARD_MODEL", _MODEL_DEFAULT.get(_PROVIDER, "gpt-4o"))

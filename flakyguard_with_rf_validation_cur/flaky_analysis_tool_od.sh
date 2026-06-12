@@ -54,16 +54,102 @@ else
 fi
 
 
+# create_folder_with_patch() {
+#     BASE_DIR=$1
+#     PATCH_FILE=$2
+#     TARGET_DIR=$3
+    
+#     rm -rf "$TARGET_DIR" 
+#     cp -r "$BASE_DIR" "$TARGET_DIR" || { echo "Failed to copy $BASE_DIR to $TARGET_DIR"; exit 1; }
+#     patch -p1 -d "$TARGET_DIR" < "$PATCH_FILE" || { echo "Failed to apply patch $PATCH_FILE to $TARGET_DIR"; exit 1; }
+# }
+
 create_folder_with_patch() {
     BASE_DIR=$1
     PATCH_FILE=$2
     TARGET_DIR=$3
-    
-    rm -rf "$TARGET_DIR" 
-    cp -r "$BASE_DIR" "$TARGET_DIR" || { echo "Failed to copy $BASE_DIR to $TARGET_DIR"; exit 1; }
-    patch -p1 -d "$TARGET_DIR" < "$PATCH_FILE" || { echo "Failed to apply patch $PATCH_FILE to $TARGET_DIR"; exit 1; }
-}
 
+    echo "===== PATCH DEBUG START ====="
+    echo "BASE_DIR=$BASE_DIR"
+    echo "PATCH_FILE=$PATCH_FILE"
+    echo "TARGET_DIR=$TARGET_DIR"
+    echo "PWD=$(pwd)"
+
+    echo
+    echo "Patch file:"
+    ls -lah "$PATCH_FILE" || true
+
+    echo
+    echo "Patch target files:"
+    grep -E '^(---|\+\+\+) [ab]/' "$PATCH_FILE" || true
+
+    echo
+    echo "Patch hunk headers:"
+    grep -n '^@@' "$PATCH_FILE" || true
+
+    echo
+    echo "First 220 lines of patch:"
+    sed -n '1,220p' "$PATCH_FILE" || true
+
+    rm -rf "$TARGET_DIR"
+    cp -r "$BASE_DIR" "$TARGET_DIR" || {
+        echo "Failed to copy $BASE_DIR to $TARGET_DIR"
+        exit 1
+    }
+
+    echo
+    echo "Checking target files before patch:"
+    grep -E '^\+\+\+ b/' "$PATCH_FILE" | sed 's#^\+\+\+ b/##' | while read -r f; do
+        echo "--- target file: $TARGET_DIR/$f"
+        if [[ -f "$TARGET_DIR/$f" ]]; then
+            ls -lah "$TARGET_DIR/$f"
+            echo "sha256:"
+            sha256sum "$TARGET_DIR/$f" || true
+
+            echo "Lines 70-150:"
+            nl -ba "$TARGET_DIR/$f" | sed -n '70,150p' || true
+        else
+            echo "MISSING TARGET FILE: $TARGET_DIR/$f"
+        fi
+    done
+
+    echo
+    echo "Dry-run patch output:"
+    if ! patch --dry-run --verbose -p1 -d "$TARGET_DIR" < "$PATCH_FILE"; then
+        echo
+        echo "Dry-run failed. Trying real patch now so .rej files are produced..."
+    fi
+
+    echo
+    echo "Real patch output:"
+    if ! patch --verbose -p1 -d "$TARGET_DIR" < "$PATCH_FILE"; then
+        echo
+        echo "Patch failed. Reject files:"
+        find "$TARGET_DIR" -name "*.rej" -print || true
+
+        echo
+        find "$TARGET_DIR" -name "*.rej" -print | while read -r rej; do
+            echo "===== REJECT FILE: $rej ====="
+            cat "$rej" || true
+        done
+
+        echo
+        echo "Target files after failed patch:"
+        grep -E '^\+\+\+ b/' "$PATCH_FILE" | sed 's#^\+\+\+ b/##' | while read -r f; do
+            echo "===== TARGET AFTER FAILED PATCH: $TARGET_DIR/$f ====="
+            if [[ -f "$TARGET_DIR/$f" ]]; then
+                nl -ba "$TARGET_DIR/$f" | sed -n '70,160p' || true
+            fi
+        done
+
+        echo "===== PATCH DEBUG END: FAILED ====="
+        echo "Failed to apply patch $PATCH_FILE to $TARGET_DIR"
+        exit 1
+    fi
+
+    echo "Patch applied successfully."
+    echo "===== PATCH DEBUG END: SUCCESS ====="
+}
 
 if [[ "$CODE_VERSION" == "All" || "$CODE_VERSION" == "Fixed" ]]; then
     if [[ ! -d "$FIXED_DIR" ]]; then

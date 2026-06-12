@@ -566,69 +566,69 @@ def _method_snippet(text: str, method_name: str) -> str:
     return text[:2500]
 
 
-def _preview_apply_fixed_patch(base_dir: Path, row: dict[str, str], patch_path: str) -> None:
-    """
-    Keep a visible debug copy showing what Fixed would look like after patching.
+# def _preview_apply_fixed_patch(base_dir: Path, row: dict[str, str], patch_path: str) -> None:
+#     """
+#     Keep a visible debug copy showing what Fixed would look like after patching.
 
-    The ReproFlake helper creates data/<issue>/Fixed, validates it, then deletes it.
-    This preview copy uses the same patch command on a separate directory so we can
-    inspect the patched source after validation.
-    """
-    row = _normalize_row(row)
-    flaky_dir = base_dir / "Flaky"
-    preview_dir = base_dir / "Fixed_debug_preview"
-    patch_file = Path(patch_path)
-    changed_files = _patch_changed_files(patch_path)
-    flaky_test = row.get("flaky_test", "")
-    method_name = flaky_test.split("#")[-1].split(".")[-1] if flaky_test else ""
+#     The ReproFlake helper creates data/<issue>/Fixed, validates it, then deletes it.
+#     This preview copy uses the same patch command on a separate directory so we can
+#     inspect the patched source after validation.
+#     """
+#     row = _normalize_row(row)
+#     flaky_dir = base_dir / "Flaky"
+#     preview_dir = base_dir / "Fixed_debug_preview"
+#     patch_file = Path(patch_path)
+#     changed_files = _patch_changed_files(patch_path)
+#     flaky_test = row.get("flaky_test", "")
+#     method_name = flaky_test.split("#")[-1].split(".")[-1] if flaky_test else ""
 
-    logger.info("[fixed-preview] Fixed.patch: %s", patch_file)
-    logger.info("[fixed-preview] Fixed.patch exists=%s size=%s bytes", patch_file.exists(), patch_file.stat().st_size if patch_file.exists() else "missing")
-    logger.info("[fixed-preview] patch target files: %s", changed_files if changed_files else "<none parsed>")
+#     logger.info("[fixed-preview] Fixed.patch: %s", patch_file)
+#     logger.info("[fixed-preview] Fixed.patch exists=%s size=%s bytes", patch_file.exists(), patch_file.stat().st_size if patch_file.exists() else "missing")
+#     logger.info("[fixed-preview] patch target files: %s", changed_files if changed_files else "<none parsed>")
 
-    if not flaky_dir.is_dir():
-        logger.info("[fixed-preview] cannot preview patch: missing Flaky dir: %s", flaky_dir)
-        return
-    if preview_dir.exists():
-        _safe_rmtree(preview_dir)
-    shutil.copytree(flaky_dir, preview_dir)
+#     if not flaky_dir.is_dir():
+#         logger.info("[fixed-preview] cannot preview patch: missing Flaky dir: %s", flaky_dir)
+#         return
+#     if preview_dir.exists():
+#         _safe_rmtree(preview_dir)
+#     shutil.copytree(flaky_dir, preview_dir)
 
-    cmd = f"patch -p1 -d {shlex.quote(str(preview_dir))} < {shlex.quote(str(patch_file))}"
-    result = subprocess.run(cmd, shell=True, cwd=str(base_dir.parent.parent), capture_output=True, text=True)
-    patch_output = (result.stdout or "") + (result.stderr or "")
+#     cmd = f"patch -p1 -d {shlex.quote(str(preview_dir))} < {shlex.quote(str(patch_file))}"
+#     result = subprocess.run(cmd, shell=True, cwd=str(base_dir.parent.parent), capture_output=True, text=True)
+#     patch_output = (result.stdout or "") + (result.stderr or "")
 
-    logger.info("[fixed-preview] preview patch command: %s", cmd)
-    logger.info("[fixed-preview] preview patch exit code: %s", result.returncode)
-    logger.info("[fixed-preview] preview patch output:\n%s", patch_output[:3000] if patch_output else "<no output>")
+#     logger.info("[fixed-preview] preview patch command: %s", cmd)
+#     logger.info("[fixed-preview] preview patch exit code: %s", result.returncode)
+#     logger.info("[fixed-preview] preview patch output:\n%s", patch_output[:3000] if patch_output else "<no output>")
 
-    for rel_path in changed_files[:5]:
-        before_path = flaky_dir / rel_path
-        after_path = preview_dir / rel_path
-        before_text = _read_text(before_path)
-        after_text = _read_text(after_path)
-        logger.info("[fixed-preview] checking target: %s", rel_path)
-        logger.info("[fixed-preview] original path exists=%s sha=%s", before_path.is_file(), _sha12(before_text))
-        logger.info("[fixed-preview] patched  path exists=%s sha=%s", after_path.is_file(), _sha12(after_text))
-        logger.info("[fixed-preview] patch changed this file: %s", "YES" if before_text != after_text else "NO")
+#     for rel_path in changed_files[:5]:
+#         before_path = flaky_dir / rel_path
+#         after_path = preview_dir / rel_path
+#         before_text = _read_text(before_path)
+#         after_text = _read_text(after_path)
+#         logger.info("[fixed-preview] checking target: %s", rel_path)
+#         logger.info("[fixed-preview] original path exists=%s sha=%s", before_path.is_file(), _sha12(before_text))
+#         logger.info("[fixed-preview] patched  path exists=%s sha=%s", after_path.is_file(), _sha12(after_text))
+#         logger.info("[fixed-preview] patch changed this file: %s", "YES" if before_text != after_text else "NO")
 
-        if before_text is not None and after_text is not None:
-            diff_lines = list(difflib.unified_diff(
-                before_text.splitlines(),
-                after_text.splitlines(),
-                fromfile=f"Flaky/{rel_path}",
-                tofile=f"Fixed_debug_preview/{rel_path}",
-                lineterm="",
-                n=4,
-            ))
-            logger.info("[fixed-preview] actual source diff after applying patch:\n%s", "\n".join(diff_lines[:180]) if diff_lines else "<no diff>")
-            if method_name:
-                logger.info(
-                    "[fixed-preview] patched source around %s:\n%s",
-                    method_name,
-                    _method_snippet(after_text, method_name),
-                )
+#         if before_text is not None and after_text is not None:
+#             diff_lines = list(difflib.unified_diff(
+#                 before_text.splitlines(),
+#                 after_text.splitlines(),
+#                 fromfile=f"Flaky/{rel_path}",
+#                 tofile=f"Fixed_debug_preview/{rel_path}",
+#                 lineterm="",
+#                 n=4,
+#             ))
+#             logger.info("[fixed-preview] actual source diff after applying patch:\n%s", "\n".join(diff_lines[:180]) if diff_lines else "<no diff>")
+#             if method_name:
+#                 logger.info(
+#                     "[fixed-preview] patched source around %s:\n%s",
+#                     method_name,
+#                     _method_snippet(after_text, method_name),
+#                 )
 
-    logger.info("[fixed-preview] kept patched preview directory: %s", preview_dir)
+#     logger.info("[fixed-preview] kept patched preview directory: %s", preview_dir)
 
 
 def _collect_logs_from_root(root: Path, base_output: str) -> str:
@@ -692,10 +692,15 @@ def _write_validation_debug_log(workdir: str, issue_id: str, text: str, label: s
 
 def _log_fixed_result_summary(base_dir: Path, output: str, returncode: int) -> None:
     """Print only the validation results for CODE_VERSION=Fixed."""
+    #fixed_result_dir = base_dir / "result" / "Fixed"
+
     fixed_result_dir = base_dir / "result" / "Fixed"
-    logger.info("[fixed-result] helper exit code: %s", returncode)
     logger.info("[fixed-result] Fixed result dir: %s", fixed_result_dir)
     logger.info("[fixed-result] Fixed result dir exists: %s", fixed_result_dir.exists())
+    # fixed_result_dir = base_dir / "Fixed"
+    # logger.info("[fixed-result] helper exit code: %s", returncode)
+    # logger.info("[fixed-result] Fixed result dir: %s", fixed_result_dir)
+    # logger.info("[fixed-result] Fixed result dir exists: %s", fixed_result_dir.exists())
 
     if fixed_result_dir.exists():
         files = [p for p in fixed_result_dir.rglob("*") if p.is_file()]
@@ -857,7 +862,7 @@ def validate_fix(test_input: TestInput, runs: int = 10, patch_path: str | None =
 
             # Debug preview: apply the same Fixed.patch to a kept copy so we can
             # inspect the exact patched source even though the helper deletes Fixed/.
-            _preview_apply_fixed_patch(base_dir, row, str(base_dir / "Fixed.patch"))
+           # _preview_apply_fixed_patch(base_dir, row, str(base_dir / "Fixed.patch"))
 
             result = subprocess.run(
                 cmd,
