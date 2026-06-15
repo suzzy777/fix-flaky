@@ -38,10 +38,26 @@ def parse_args():
     # Required repair inputs.
     #parser.add_argument("--repo", required=True, help="Absolute path to editable repository root")
     parser.add_argument("--repo", default=".", help="Path to repo; ignored in ReproFlake mode")
-    parser.add_argument("--test-file", required=True, help="Test file path relative to --repo")
-    parser.add_argument("--test-func", required=True, help="Test function/method name")
-    #parser.add_argument("--test-case", help="Test case name; defaults to --test-func")
-    parser.add_argument("--test-case", default=None)
+    # parser.add_argument("--test-file", required=True, help="Test file path relative to --repo")
+    # parser.add_argument("--test-func", required=True, help="Test function/method name")
+    # #parser.add_argument("--test-case", help="Test case name; defaults to --test-func")
+    # parser.add_argument("--test-case", default=None)
+
+    parser.add_argument(
+        "--test-file",
+        default="",
+        help="Optional test-file override. Normally inferred from test_config.csv.",
+    )
+    parser.add_argument(
+        "--test-func",
+        default="",
+        help="Optional test-method override. Normally inferred from test_config.csv.",
+    )
+    parser.add_argument(
+        "--test-case",
+        default="",
+        help="Optional test-case override; defaults to the inferred test method.",
+    )
     parser.add_argument(
         "--language",
         default="java",
@@ -214,16 +230,20 @@ def _safe_remove_dir(path: Path) -> None:
                     pass
         shutil.rmtree(path)
 
-def _prepare_reproflake_work_repo(args) -> str:
+#def _prepare_reproflake_work_repo(args) -> str:
+def _prepare_reproflake_work_repo(
+    args,
+) -> tuple[str, dict[str, str]]:
     """
     Extract ReproFlake artifact to a stable work repo and return Flaky/ path.
 
     This avoids generating patches from a separate local checkout that may not
     match the ReproFlake artifact.
     """
+    # if not getattr(args, "repro_script", None) or not getattr(args, "repro_issue_id", None):
+    #     return os.path.abspath(args.repo)
     if not getattr(args, "repro_script", None) or not getattr(args, "repro_issue_id", None):
-        return os.path.abspath(args.repo)
-
+        return os.path.abspath(getattr(args, "repo", ".") or "."), {}
     workdir = (
         Path(args.repro_workdir).resolve()
         if getattr(args, "repro_workdir", None)
@@ -303,7 +323,128 @@ def _prepare_reproflake_work_repo(args) -> str:
         raise FileNotFoundError(f"Flaky source not found after extraction: {flaky_repo}")
 
     logger.info("Using ReproFlake artifact source as repo_root: %s", flaky_repo)
-    return str(flaky_repo.resolve())
+    #return str(flaky_repo.resolve())
+    return str(flaky_repo.resolve()), row
+
+def _infer_java_test_from_config(
+    repo_root: str,
+    row: dict[str, str],
+) -> tuple[str, str]:
+    """
+    Infer the test source file and method from test_config.csv.
+
+    Example:
+      module:
+        dubbo-rpc/dubbo-rpc-api
+
+      flaky_test:
+        org.apache.dubbo.rpc.proxy.jdk.JdkProxyFactoryTest#testGetInvoker
+
+      result:
+        dubbo-rpc/dubbo-rpc-api/src/test/java/
+        org/apache/dubbo/rpc/proxy/jdk/JdkProxyFactoryTest.java
+    """
+    full_test_name = row.get("flaky_test", "").strip()
+
+    if not full_test_name or "#" not in full_test_name:
+        raise ValueError(
+            "CSV flaky_test must use the format "
+            "'fully.qualified.TestClass#testMethod'; "
+            f"got: {full_test_name!r}"
+        )
+
+    class_name, test_func = full_test_name.rsplit("#", 1)
+
+    # Handle parameterized/display-name suffixes if present.
+    test_func = test_func.split("[", 1)[0]
+    test_func = test_func.split("(", 1)[0].strip()
+
+    # A nested class such as ExampleTest$NestedTest is normally stored in
+    # ExampleTest.java.
+    top_level_class = class_name.split("$", 1)[0]
+
+    package_file = Path(
+        *top_level_class.split(".")
+    ).with_suffix(".java")
+
+    module = row.get("module", "").strip().strip("/")
+    repo_path = Path(repo_root).resolve()
+
+    if module and module != ".":
+        module_root = repo_path / module
+    else:
+        module_root = repo_path
+
+    if not module_root.is_dir():
+        raise FileNotFoundError(
+            f"Module directory from CSV does not exist: {module_root}"
+        )
+
+    # First try the standard Maven location.
+    direct_candidate = (
+        module_root
+        / "src"
+        / "test"
+        / "java"
+        / package_file
+    )
+
+    if direct_candidate.is_file():
+        return (
+            direct_candidate.relative_to(repo_path).as_posix(),
+            test_func,
+        )
+
+    # Fallback: equivalent to manually running:
+    # find <module> -name TestClass.java
+    filename = package_file.name
+
+    matches = [
+        path
+        for path in module_root.rglob(filename)
+        if path.is_file()
+        and "target" not in path.parts
+        and "build" not in path.parts
+        and ".git" not in path.parts
+    ]
+
+    if not matches:
+        raise FileNotFoundError(
+            f"Could not find {filename} under {module_root}. "
+            f"Derived from CSV flaky_test={full_test_name!r}"
+        )
+
+    package_suffix = package_file.as_posix()
+
+    # Prefer the file whose ending matches the fully qualified class path.
+    package_matches = [
+        path
+        for path in matches
+        if path.as_posix().endswith(package_suffix)
+    ]
+
+    # Prefer Maven test source when several files have the same name.
+    maven_test_matches = [
+        path
+        for path in package_matches
+        if "/src/test/java/" in f"/{path.as_posix()}"
+    ]
+
+    if len(maven_test_matches) == 1:
+        selected = maven_test_matches[0]
+    elif len(package_matches) == 1:
+        selected = package_matches[0]
+    elif len(matches) == 1:
+        selected = matches[0]
+    else:
+        formatted = "\n".join(f"  - {path}" for path in matches)
+        raise RuntimeError(
+            f"Multiple possible source files found for {full_test_name}:\n"
+            f"{formatted}\n"
+            "Use --test-file to override this ambiguous case."
+        )
+
+    return selected.relative_to(repo_path).as_posix(), test_func
 # def _prepare_reproflake_work_repo(args) -> str:
 #     """
 #     Extract ReproFlake artifact to a stable work repo and return Flaky/ path.
@@ -387,11 +528,39 @@ def main():
 
 
     #repo_root = _prepare_reproflake_work_repo(args)
-
-    repo_root = _prepare_reproflake_work_repo(args)
+    repo_root, repro_row = _prepare_reproflake_work_repo(args)
 
     test_file = args.test_file.lstrip("/")
 
+    if repro_row:
+        inferred_test_file, inferred_test_func = _infer_java_test_from_config(
+            repo_root,
+            repro_row,
+        )
+    else:
+        inferred_test_file = ""
+        inferred_test_func = ""
+    test_file = args.test_file or inferred_test_file
+    test_func = args.test_func or inferred_test_func
+    test_case = args.test_case or test_func
+
+    if not test_file:
+        raise ValueError(
+            "Could not determine test file. Supply --test-file or use "
+            "a valid ReproFlake CSV row."
+        )
+
+    if not test_func:
+        raise ValueError(
+            "Could not determine test method. Supply --test-func or ensure "
+            "the CSV flaky_test column contains Class#method."
+        )
+
+    logger.info("Resolved repo_root: %s", repo_root)
+    logger.info("Resolved test_file: %s", test_file)
+    logger.info("Resolved test_func: %s", test_func)
+
+    
     if args.repro_script and args.repro_issue_id:
         workdir = (
             Path(args.repro_workdir).resolve()
@@ -409,20 +578,19 @@ def main():
 
         logger.info("CSV module for this issue: %r", module)
 
-        if module and module != ".":
-            prefix = module + "/"
-            if not test_file.startswith(prefix):
-                test_file = prefix + test_file
+        # if module and module != ".":
+        #     prefix = module + "/"
+        #     if not test_file.startswith(prefix):
+        #         test_file = prefix + test_file
 
     logger.info("Final repo_root used by FlakyGuard: %s", repo_root)
     logger.info("Final test_file used by FlakyGuard: %s", test_file)
-    
+
     test_input = TestInput(
-        #repo_root=os.path.abspath(args.repo),
-        repo_root=repo_root,
+    repo_root=repo_root,
         test_file=test_file,
-        test_func=args.test_func,
-        test_case=args.test_case or args.test_func,
+        test_func=test_func,
+        test_case=test_case,
         language=args.language,
         repro_script=args.repro_script,
         repro_issue_id=args.repro_issue_id,
@@ -431,15 +599,35 @@ def main():
         repro_zip=args.repro_zip or "",
         repro_timeout=args.repro_timeout,
         script_validation_iterations=10,
-        context_attempts=context_attempts,
-        thoughts_per_context=args.thoughts_per_context,
-        fixes_per_thought=args.fixes_per_thought,
         use_jacoco_coverage=args.use_jacoco_coverage,
         coverage_cmd=args.coverage_runner or "",
         coverage_report=args.coverage_report,
         coverage_timeout=args.coverage_timeout,
         coverage_max_files=args.coverage_max_files,
     )
+    # test_input = TestInput(
+    #     #repo_root=os.path.abspath(args.repo),
+    #     repo_root=repo_root,
+    #     test_file=test_file,
+    #     test_func=args.test_func,
+    #     test_case=args.test_case or args.test_func,
+    #     language=args.language,
+    #     repro_script=args.repro_script,
+    #     repro_issue_id=args.repro_issue_id,
+    #     repro_workdir=args.repro_workdir or "",
+    #     repro_config_csv=args.repro_config_csv,
+    #     repro_zip=args.repro_zip or "",
+    #     repro_timeout=args.repro_timeout,
+    #     script_validation_iterations=10,
+    #     context_attempts=context_attempts,
+    #     thoughts_per_context=args.thoughts_per_context,
+    #     fixes_per_thought=args.fixes_per_thought,
+    #     use_jacoco_coverage=args.use_jacoco_coverage,
+    #     coverage_cmd=args.coverage_runner or "",
+    #     coverage_report=args.coverage_report,
+    #     coverage_timeout=args.coverage_timeout,
+    #     coverage_max_files=args.coverage_max_files,
+    # )
 
     print(f"\n[1/3] Reproducing flaky failure (script issue_id={test_input.repro_issue_id})…")
     flaky_info = reproduce_failure(test_input)

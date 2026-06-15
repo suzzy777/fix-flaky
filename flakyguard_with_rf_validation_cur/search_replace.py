@@ -407,6 +407,15 @@ def apply_fix(fix: Fix, repo_root: str) -> tuple[bool, dict[str, FileBackup] | s
                 f"Search text not found:\n{edit.search_text[:200]}..."
             )
 
+        if edit.search_text not in content:
+            return False, (
+                f"Pre-validation failed in {filepath}: "
+                f"Search text not found:\n"
+                f"----- SEARCH START -----\n"
+                f"{edit.search_text}\n"
+                f"----- SEARCH END -----"
+            )
+
     backups: dict[str, FileBackup] = {}
     try:
         for filepath, _ in resolved:
