@@ -401,11 +401,11 @@ def apply_fix(fix: Fix, repo_root: str) -> tuple[bool, dict[str, FileBackup] | s
         with open(filepath, "r", encoding="utf-8", errors="replace") as file:
             content = file.read()
 
-        if edit.search_text not in content:
-            return False, (
-                f"Pre-validation failed in {filepath}: "
-                f"Search text not found:\n{edit.search_text[:200]}..."
-            )
+        # if edit.search_text not in content:
+        #     return False, (
+        #         f"Pre-validation failed in {filepath}: "
+        #         f"Search text not found:\n{edit.search_text[:200]}..."
+        #     )
 
         if edit.search_text not in content:
             return False, (
