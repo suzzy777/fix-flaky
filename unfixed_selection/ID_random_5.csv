@@ -1,0 +1,5 @@
+https://github.com/apache/servicecomb-java-chassis,58bef312b02e24e52eb1aa63ba3b01d70ea50142,swagger/swagger-generator,org.apache.servicecomb.swagger.generator.core.TestSwaggerUtils.testSchemaMethod,ID,,,
+https://github.com/apache/flink,23c9b5ac50d04d28a34a87c78eb2d3331c06b74b,flink-table/flink-table-runtime-blink,org.apache.flink.table.runtime.operators.join.RowTimeBoundedStreamJoinTest.testRowTimeLeftOuterJoin,ID,,,https://github.com/TestingResearchIllinois/idoft/issues/20
+https://github.com/google/guava,a197d99b96d69ea75a2c4a15ecd8a730dd3270d6,guava-testlib,com.google.common.collect.testing.testers.MapToStringTester.testToString_formatting[ConcurrentHashMap [collection size: several]],ID,,,
+https://github.com/apache/hbase,801fc05e9c082ab12c7c1207087d3667ab162d1a,hbase-server,org.apache.hadoop.hbase.regionserver.TestSyncTimeRangeTracker.testConcurrentIncludeTimestampCorrectness,ID,,,
+https://github.com/apache/tinkerpop,8bfdf50778e29d98c6554a01688fc5cc34524522,gremlin-server,org.apache.tinkerpop.gremlin.server.auth.SimpleAuthenticatorTest.shouldUseTinkerGraphForCredentialsStoreAndSucceed,ID,,,

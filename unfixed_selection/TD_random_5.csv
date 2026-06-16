@@ -1,0 +1,5 @@
+https://github.com/wro4j/wro4j,7e3801e19fb43183c59607663ebd53c27a95cf77,wro4j-core,ro.isdc.wro.util.concurrent.TestTaskExecutor.shouldBeFasterWhenRunningMultipleSlowTasks,TD,,,
+https://github.com/TooTallNate/Java-WebSocket,fa3909c391195178ccf5a92d4ac342a30ae247c8,.,org.java_websocket.protocols.ProtoclHandshakeRejectionTest.testHandshakeRejectionTestCase9,TD,,,https://github.com/TestingResearchIllinois/idoft/issues/22
+https://github.com/apache/httpcore,49247d208bde47f652812493e1d3576e136b8eb8,httpcore,org.apache.http.pool.TestConnPool.testStatefulConnectionRedistributionOnPerRouteMaxLimit,TD,,,
+https://github.com/doanduyhai/Achilles,f52f7ec93b3da758119dbbbc1be8dad8e8783764,integration-test,info.archinnov.achilles.test.integration.tests.ClusteredEntityIT.should_update_with_ttl,TD,,,
+https://github.com/apache/dubbo,737f7a7ea67832d7f17517326fb2491d0a086dd7,dubbo-rpc/dubbo-rpc-dubbo,org.apache.dubbo.rpc.protocol.dubbo.DubboProtocolTest.testPerm,TD,,,
