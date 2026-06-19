@@ -1,0 +1,11 @@
+Yes, it looks conceptually correct.
+
+The problem says the test is affected by leftover exported service state. The patch adds cleanup before each test:
+
+ProtocolUtils.closeAll();
+
+inside @Before setUp().
+
+That means each test starts with no previously exported protocol/service state, so testChangeServiceNotExport should no longer depend on whether another test ran before it.
+
+So this is a good OD/shared-state flaky fix if ProtocolUtils.closeAll() really clears the exported service/protocol registry used by that telnet handler.

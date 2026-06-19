@@ -1,0 +1,1140 @@
+2026-06-18 19:29:36,234  INFO     Downloading ReproFlake zip directly: https://zenodo.org/records/18474558/files/ZOOKEEPER-4327.zip
+2026-06-18 19:29:41,259  INFO     Using ReproFlake artifact source as repo_root: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/data/ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_work_repo/Flaky
+2026-06-18 19:29:41,260  INFO     Resolved repo_root: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/data/ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_work_repo/Flaky
+2026-06-18 19:29:41,260  INFO     Resolved test_file: zookeeper-server/src/test/java/org/apache/zookeeper/server/RequestThrottlerTest.java
+2026-06-18 19:29:41,260  INFO     Resolved test_func: testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled
+2026-06-18 19:29:41,260  INFO     CSV module for this issue: 'zookeeper-server'
+2026-06-18 19:29:41,260  INFO     Final repo_root used by FlakyGuard: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/data/ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_work_repo/Flaky
+2026-06-18 19:29:41,261  INFO     Final test_file used by FlakyGuard: zookeeper-server/src/test/java/org/apache/zookeeper/server/RequestThrottlerTest.java
+2026-06-18 19:29:41,261  INFO     Reproducing flaky test with script: bash ./single_runner.sh ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled (cwd=/home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run)
+2026-06-18 19:29:41,261  INFO     For FlakyGuard reproduction only, forcing ReproFlake CODE_VERSION=Flaky and iterations=10.
+2026-06-18 19:32:53,854  INFO     Failure reproduced via script.
+2026-06-18 19:32:53,854  INFO     Repair budget: M=3 context attempts × P=2 thoughts/context × N=3 fixes/thought = 18 candidate fixes
+2026-06-18 19:32:53,854  INFO     ─── Context attempt M=1/3: collecting context ───
+2026-06-18 19:32:53,856  INFO     Collecting JaCoCo coverage with ReproFlake helper: bash /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/flaky_analysis_tool_td.sh ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled ZOOKEEPER-4327 zookeeper-server 'org.apache.zookeeper.server.RequestThrottlerTest#testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled' 1 Flaky
+2026-06-18 19:33:57,141  INFO     Coverage helper exit ok=True
+2026-06-18 19:33:57,142  INFO     Coverage helper output tail:
+73c8c992c3615ebe88f74d76c433beae7cc4b64b7d2b70039ba937da929122ce
+Parameters: module=zookeeper-server, dir_to_python_script=/app/source, full_test_name=org.apache.zookeeper.server.RequestThrottlerTest#testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled, iterations=1
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Apache ZooKeeper                                                   [pom]
+[INFO] Apache ZooKeeper - Jute                                            [jar]
+[INFO] Apache ZooKeeper - Server                                          [jar]
+[INFO] 
+[INFO] --------------------< org.apache.zookeeper:parent >---------------------
+[INFO] Building Apache ZooKeeper 3.9.0-SNAPSHOT                           [1/3]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ parent ---
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ parent ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ parent ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:test-jar (Jar Tests Package) @ parent ---
+[INFO] Skipping packaging of the test-jar
+[INFO] 
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ parent >>>
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ parent ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ parent ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ parent <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ parent ---
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.1.1:jar (attach-javadocs) @ parent ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-site-plugin:3.7.1:attach-descriptor (attach-descriptor) @ parent ---
+[INFO] No site descriptor found: nothing to attach.
+[INFO] 
+[INFO] --- checksum-maven-plugin:1.8:artifacts (default) @ parent ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ parent ---
+[INFO] Installing /app/source/pom.xml to /root/.m2/repository/org/apache/zookeeper/parent/3.9.0-SNAPSHOT/parent-3.9.0-SNAPSHOT.pom
+[INFO] 
+[INFO] ----------------< org.apache.zookeeper:zookeeper-jute >-----------------
+[INFO] Building Apache ZooKeeper - Jute 3.9.0-SNAPSHOT                    [2/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ zookeeper-jute ---
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper-jute ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper-jute ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- javacc-maven-plugin:2.6:javacc (javacc) @ zookeeper-jute ---
+Java Compiler Compiler Version 5.0 (Parser Generator)
+(type "javacc" with no arguments for help)
+Reading from file /app/source/zookeeper-jute/src/main/java/org/apache/jute/compiler/generated/rcc.jj . . .
+File "TokenMgrError.java" does not exist.  Will create one.
+File "ParseException.java" does not exist.  Will create one.
+File "Token.java" does not exist.  Will create one.
+File "SimpleCharStream.java" does not exist.  Will create one.
+Parser generated with 0 errors and 1 warnings.
+[INFO] Processed 1 grammar
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (pre-compile-jute) @ zookeeper-jute ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 36 source files to /app/source/zookeeper-jute/target/classes
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (generate-Java-Jute) @ zookeeper-jute ---
+/app/source/zookeeper-jute/src/main/resources/zookeeper.jute Parsed Successfully
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (generate-C-Jute) @ zookeeper-jute ---
+/app/source/zookeeper-jute/src/main/resources/zookeeper.jute Parsed Successfully
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (jute-as-dependency) @ zookeeper-jute ---
+[INFO] Source directory: /app/source/zookeeper-jute/target/generated-sources/java added.
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ zookeeper-jute ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /app/source/zookeeper-jutesrc/main/java/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ zookeeper-jute ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 108 source files to /app/source/zookeeper-jute/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ zookeeper-jute ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /app/source/zookeeper-jute/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ zookeeper-jute ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 4 source files to /app/source/zookeeper-jute/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.22.1:test (default-test) @ zookeeper-jute ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:jar (default-jar) @ zookeeper-jute ---
+[INFO] Building jar: /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:test-jar (Jar Tests Package) @ zookeeper-jute ---
+[INFO] Building jar: /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ zookeeper-jute >>>
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper-jute ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper-jute ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- javacc-maven-plugin:2.6:javacc (javacc) @ zookeeper-jute ---
+[INFO] Skipping - all parsers are up to date
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (pre-compile-jute) @ zookeeper-jute ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 108 source files to /app/source/zookeeper-jute/target/classes
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (generate-Java-Jute) @ zookeeper-jute ---
+/app/source/zookeeper-jute/src/main/resources/zookeeper.jute Parsed Successfully
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (generate-C-Jute) @ zookeeper-jute ---
+/app/source/zookeeper-jute/src/main/resources/zookeeper.jute Parsed Successfully
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (jute-as-dependency) @ zookeeper-jute ---
+[INFO] Source directory: /app/source/zookeeper-jute/target/generated-sources/java added.
+[INFO] 
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ zookeeper-jute <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ zookeeper-jute ---
+[INFO] Building jar: /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.1.1:jar (attach-javadocs) @ zookeeper-jute ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-site-plugin:3.7.1:attach-descriptor (attach-descriptor) @ zookeeper-jute ---
+[INFO] Skipping because packaging 'jar' is not pom.
+[INFO] 
+[INFO] --- maven-bundle-plugin:5.1.1:bundle (build bundle) @ zookeeper-jute ---
+[INFO] 
+[INFO] --- checksum-maven-plugin:1.8:artifacts (default) @ zookeeper-jute ---
+[INFO] zookeeper-jute-3.9.0-SNAPSHOT.jar - SHA-512 : fff94fc46fcfd6f5302b7c78518ae28220d93bc841556c831cd2961bff374ea9f245196e2f4669148b9a50e49d8d9273646a18ef9e58ada063b055b429dfa3f9
+[INFO] zookeeper-jute-3.9.0-SNAPSHOT-tests.jar - SHA-512 : 288dfcb1fb40a800b231006b90de213903849149def81f8bc178f05248b8438de5ea18ce4468f34751a3f1dd5a93585c03ca9c4f0715eb020d8252080b94d301
+[INFO] zookeeper-jute-3.9.0-SNAPSHOT-sources.jar - SHA-512 : 0078b275b235264eb2f2c6aaafcb006f02cc637c4a87e9a96ff7cefe2c8baca14adace0a8057dee4e52860a4358d199d336d0c798e19d4f1b76df36c6a450838
+[INFO] zookeeper-jute-3.9.0-SNAPSHOT-osgi.jar - SHA-512 : b12e3ac7e4222b7eb09f2d093346470565e0c64ac8d2662a21f4162f3f8edfa57f059f9ebbc6158fa959c624180a4d661d618e01e9893840b366100472062f49
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ zookeeper-jute ---
+[INFO] Installing /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT.jar
+[INFO] Installing /app/source/zookeeper-jute/pom.xml to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT.pom
+[INFO] Installing /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT-tests.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT-tests.jar
+[INFO] Installing /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT-sources.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT-sources.jar
+[INFO] Installing /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT-osgi.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT-osgi.jar
+[INFO] 
+[INFO] -------------------< org.apache.zookeeper:zookeeper >-------------------
+[INFO] Building Apache ZooKeeper - Server 3.9.0-SNAPSHOT                  [3/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from central: https://repo.maven.apache.org/maven2/net/minidev/json-smart/maven-metadata.xml
+Downloading from apache.snapshots: https://repository.apache.org/snapshots/net/minidev/json-smart/maven-metadata.xml
+Progress (1): 1.4 kB
+                    
+Downloaded from central: https://repo.maven.apache.org/maven2/net/minidev/json-smart/maven-metadata.xml (1.4 kB at 5.0 kB/s)
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ zookeeper ---
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:timestamp-property (build-time) @ zookeeper ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:parse-version (parse-version) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (default) @ zookeeper ---
+[INFO] Source directory: /app/source/zookeeper-server/target/generated-sources/java added.
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:copy-resources (prepare-filtered-java-source) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /app/source/zookeeper-serversrc/main/java/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ zookeeper ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 372 source files to /app/source/zookeeper-server/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 37 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ zookeeper ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 367 source files to /app/source/zookeeper-server/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.22.1:test (default-test) @ zookeeper ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:jar (default-jar) @ zookeeper ---
+[INFO] Building jar: /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-dependency-plugin:3.1.1:copy-dependencies (copy-dependencies) @ zookeeper ---
+[INFO] Copying spotbugs-annotations-4.0.2.jar to /app/source/zookeeper-server/target/lib/spotbugs-annotations-4.0.2.jar
+[INFO] Copying jsr305-3.0.2.jar to /app/source/zookeeper-server/target/lib/jsr305-3.0.2.jar
+[INFO] Copying hamcrest-library-2.2.jar to /app/source/zookeeper-server/target/lib/hamcrest-library-2.2.jar
+[INFO] Copying hamcrest-core-2.2.jar to /app/source/zookeeper-server/target/lib/hamcrest-core-2.2.jar
+[INFO] Copying hamcrest-2.2.jar to /app/source/zookeeper-server/target/lib/hamcrest-2.2.jar
+[INFO] Copying commons-collections4-4.4.jar to /app/source/zookeeper-server/target/lib/commons-collections4-4.4.jar
+[INFO] Copying zookeeper-jute-3.9.0-SNAPSHOT.jar to /app/source/zookeeper-server/target/lib/zookeeper-jute-3.9.0-SNAPSHOT.jar
+[INFO] Copying commons-cli-1.4.jar to /app/source/zookeeper-server/target/lib/commons-cli-1.4.jar
+[INFO] Copying audience-annotations-0.12.0.jar to /app/source/zookeeper-server/target/lib/audience-annotations-0.12.0.jar
+[INFO] Copying netty-handler-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-handler-4.1.76.Final.jar
+[INFO] Copying netty-common-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-common-4.1.76.Final.jar
+[INFO] Copying netty-resolver-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-resolver-4.1.76.Final.jar
+[INFO] Copying netty-buffer-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-buffer-4.1.76.Final.jar
+[INFO] Copying netty-transport-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-transport-4.1.76.Final.jar
+[INFO] Copying netty-codec-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-codec-4.1.76.Final.jar
+[INFO] Copying netty-transport-native-epoll-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-transport-native-epoll-4.1.76.Final.jar
+[INFO] Copying netty-transport-native-unix-common-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-transport-native-unix-common-4.1.76.Final.jar
+[INFO] Copying netty-transport-classes-epoll-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-transport-classes-epoll-4.1.76.Final.jar
+[INFO] Copying slf4j-api-1.7.30.jar to /app/source/zookeeper-server/target/lib/slf4j-api-1.7.30.jar
+[INFO] Copying logback-core-1.2.10.jar to /app/source/zookeeper-server/target/lib/logback-core-1.2.10.jar
+[INFO] Copying logback-classic-1.2.10.jar to /app/source/zookeeper-server/target/lib/logback-classic-1.2.10.jar
+[INFO] Copying jetty-server-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-server-9.4.43.v20210629.jar
+[INFO] Copying javax.servlet-api-3.1.0.jar to /app/source/zookeeper-server/target/lib/javax.servlet-api-3.1.0.jar
+[INFO] Copying jetty-http-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-http-9.4.43.v20210629.jar
+[INFO] Copying jetty-util-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-util-9.4.43.v20210629.jar
+[INFO] Copying jetty-io-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-io-9.4.43.v20210629.jar
+[INFO] Copying jetty-servlet-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-servlet-9.4.43.v20210629.jar
+[INFO] Copying jetty-security-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-security-9.4.43.v20210629.jar
+[INFO] Copying jetty-util-ajax-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-util-ajax-9.4.43.v20210629.jar
+[INFO] Copying jetty-client-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-client-9.4.43.v20210629.jar
+[INFO] Copying jackson-databind-2.13.2.1.jar to /app/source/zookeeper-server/target/lib/jackson-databind-2.13.2.1.jar
+[INFO] Copying jackson-annotations-2.13.2.jar to /app/source/zookeeper-server/target/lib/jackson-annotations-2.13.2.jar
+[INFO] Copying jackson-core-2.13.2.jar to /app/source/zookeeper-server/target/lib/jackson-core-2.13.2.jar
+[INFO] Copying bcprov-jdk15on-1.60.jar to /app/source/zookeeper-server/target/lib/bcprov-jdk15on-1.60.jar
+[INFO] Copying bcpkix-jdk15on-1.60.jar to /app/source/zookeeper-server/target/lib/bcpkix-jdk15on-1.60.jar
+[INFO] Copying jline-2.14.6.jar to /app/source/zookeeper-server/target/lib/jline-2.14.6.jar
+[INFO] Copying metrics-core-4.1.12.1.jar to /app/source/zookeeper-server/target/lib/metrics-core-4.1.12.1.jar
+[INFO] Copying kerb-core-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-core-2.0.0.jar
+[INFO] Copying kerby-pkix-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-pkix-2.0.0.jar
+[INFO] Copying kerby-asn1-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-asn1-2.0.0.jar
+[INFO] Copying kerby-util-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-util-2.0.0.jar
+[INFO] Copying kerb-simplekdc-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-simplekdc-2.0.0.jar
+[INFO] Copying kerb-client-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-client-2.0.0.jar
+[INFO] Copying kerb-common-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-common-2.0.0.jar
+[INFO] Copying kerb-crypto-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-crypto-2.0.0.jar
+[INFO] Copying kerb-util-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-util-2.0.0.jar
+[INFO] Copying token-provider-2.0.0.jar to /app/source/zookeeper-server/target/lib/token-provider-2.0.0.jar
+[INFO] Copying nimbus-jose-jwt-4.41.2.jar to /app/source/zookeeper-server/target/lib/nimbus-jose-jwt-4.41.2.jar
+[INFO] Copying jcip-annotations-1.0-1.jar to /app/source/zookeeper-server/target/lib/jcip-annotations-1.0-1.jar
+[INFO] Copying json-smart-2.3.jar to /app/source/zookeeper-server/target/lib/json-smart-2.3.jar
+[INFO] Copying accessors-smart-1.2.jar to /app/source/zookeeper-server/target/lib/accessors-smart-1.2.jar
+[INFO] Copying asm-5.0.4.jar to /app/source/zookeeper-server/target/lib/asm-5.0.4.jar
+[INFO] Copying kerb-admin-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-admin-2.0.0.jar
+[INFO] Copying kerb-server-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-server-2.0.0.jar
+[INFO] Copying kerb-identity-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-identity-2.0.0.jar
+[INFO] Copying kerby-xdr-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-xdr-2.0.0.jar
+[INFO] Copying kerby-config-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-config-2.0.0.jar
+[INFO] Copying mockito-core-3.6.28.jar to /app/source/zookeeper-server/target/lib/mockito-core-3.6.28.jar
+[INFO] Copying byte-buddy-1.10.18.jar to /app/source/zookeeper-server/target/lib/byte-buddy-1.10.18.jar
+[INFO] Copying byte-buddy-agent-1.10.18.jar to /app/source/zookeeper-server/target/lib/byte-buddy-agent-1.10.18.jar
+[INFO] Copying objenesis-3.1.jar to /app/source/zookeeper-server/target/lib/objenesis-3.1.jar
+[INFO] Copying jmockit-1.48.jar to /app/source/zookeeper-server/target/lib/jmockit-1.48.jar
+[INFO] Copying junit-jupiter-api-5.6.2.jar to /app/source/zookeeper-server/target/lib/junit-jupiter-api-5.6.2.jar
+[INFO] Copying apiguardian-api-1.1.0.jar to /app/source/zookeeper-server/target/lib/apiguardian-api-1.1.0.jar
+[INFO] Copying opentest4j-1.2.0.jar to /app/source/zookeeper-server/target/lib/opentest4j-1.2.0.jar
+[INFO] Copying junit-platform-commons-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-commons-1.6.2.jar
+[INFO] Copying junit-jupiter-engine-5.6.2.jar to /app/source/zookeeper-server/target/lib/junit-jupiter-engine-5.6.2.jar
+[INFO] Copying junit-platform-engine-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-engine-1.6.2.jar
+[INFO] Copying junit-jupiter-params-5.6.2.jar to /app/source/zookeeper-server/target/lib/junit-jupiter-params-5.6.2.jar
+[INFO] Copying junit-platform-runner-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-runner-1.6.2.jar
+[INFO] Copying junit-4.13.jar to /app/source/zookeeper-server/target/lib/junit-4.13.jar
+[INFO] Copying junit-platform-launcher-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-launcher-1.6.2.jar
+[INFO] Copying junit-platform-suite-api-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-suite-api-1.6.2.jar
+[INFO] Copying snappy-java-1.1.7.7.jar to /app/source/zookeeper-server/target/lib/snappy-java-1.1.7.7.jar
+[INFO] Copying commons-io-2.11.0.jar to /app/source/zookeeper-server/target/lib/commons-io-2.11.0.jar
+[INFO] 
+[INFO] --- maven-bundle-plugin:5.1.1:bundle (build bundle) @ zookeeper ---
+[WARNING] Bundle org.apache.zookeeper:zookeeper:jar:3.9.0-SNAPSHOT : Split package, multiple jars provide the same package:org/apache/zookeeper/server/quorum
+Use Import/Export Package directive -split-package:=(merge-first|merge-last|error|first) to get rid of this warning
+Package found in   [Jar:., Jar:zookeeper-jute]
+Class path         [Jar:., Jar:spotbugs-annotations, Jar:jsr305, Jar:zookeeper-jute, Jar:commons-cli, Jar:audience-annotations, Jar:netty-handler, Jar:netty-common, Jar:netty-resolver, Jar:netty-buffer, Jar:netty-transport, Jar:netty-codec, Jar:netty-transport-native-epoll, Jar:netty-transport-native-unix-common, Jar:netty-transport-classes-epoll, Jar:slf4j-api, Jar:logback-core, Jar:logback-classic, Jar:jetty-server, Jar:javax.servlet-api, Jar:jetty-http, Jar:jetty-util, Jar:jetty-io, Jar:jetty-servlet, Jar:jetty-security, Jar:jetty-util-ajax, Jar:jetty-client, Jar:jackson-databind, Jar:jackson-annotations, Jar:jackson-core, Jar:jline, Jar:metrics-core, Jar:snappy-java, Jar:commons-io]
+[WARNING] Bundle org.apache.zookeeper:zookeeper:jar:3.9.0-SNAPSHOT : Split package, multiple jars provide the same package:org/apache/zookeeper/server/persistence
+Use Import/Export Package directive -split-package:=(merge-first|merge-last|error|first) to get rid of this warning
+Package found in   [Jar:., Jar:zookeeper-jute]
+Class path         [Jar:., Jar:spotbugs-annotations, Jar:jsr305, Jar:zookeeper-jute, Jar:commons-cli, Jar:audience-annotations, Jar:netty-handler, Jar:netty-common, Jar:netty-resolver, Jar:netty-buffer, Jar:netty-transport, Jar:netty-codec, Jar:netty-transport-native-epoll, Jar:netty-transport-native-unix-common, Jar:netty-transport-classes-epoll, Jar:slf4j-api, Jar:logback-core, Jar:logback-classic, Jar:jetty-server, Jar:javax.servlet-api, Jar:jetty-http, Jar:jetty-util, Jar:jetty-io, Jar:jetty-servlet, Jar:jetty-security, Jar:jetty-util-ajax, Jar:jetty-client, Jar:jackson-databind, Jar:jackson-annotations, Jar:jackson-core, Jar:jline, Jar:metrics-core, Jar:snappy-java, Jar:commons-io]
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:test-jar (Jar Tests Package) @ zookeeper ---
+[INFO] Building jar: /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:test-jar (publish-test-jar) @ zookeeper ---
+[WARNING] artifact org.apache.zookeeper:zookeeper:test-jar:tests:3.9.0-SNAPSHOT already attached, replace previous instance
+[INFO] 
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ zookeeper >>>
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:timestamp-property (build-time) @ zookeeper ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:parse-version (parse-version) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (default) @ zookeeper ---
+[INFO] Source directory: /app/source/zookeeper-server/target/generated-sources/java added.
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:copy-resources (prepare-filtered-java-source) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ zookeeper <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ zookeeper ---
+[INFO] Building jar: /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.1.1:jar (attach-javadocs) @ zookeeper ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-site-plugin:3.7.1:attach-descriptor (attach-descriptor) @ zookeeper ---
+[INFO] Skipping because packaging 'jar' is not pom.
+[INFO] 
+[INFO] --- checksum-maven-plugin:1.8:artifacts (default) @ zookeeper ---
+[INFO] zookeeper-3.9.0-SNAPSHOT.jar - SHA-512 : 8f6be38297d942f1d092e6a2cddb4654d1a48142cc994c4c651e89c05cf95b168c60a3d5efce474d8cc6d37c627f47406faa8c3629af009e8e9a469929eb62c6
+[INFO] zookeeper-3.9.0-SNAPSHOT-osgi.jar - SHA-512 : 76e2ebd7f859021064e88aa142638a8982bba5cf628a0189306060e5ddc420da472547a54ad4d9582b890247f00cd36b7b6486f9a99cdd8d9182630d9f30bdc5
+[INFO] zookeeper-3.9.0-SNAPSHOT-tests.jar - SHA-512 : b378749080373d5207feec1860f8d333964df7cbd976b1c2267592a3f7b52335243e8be0f975b748459d23fb3e392b9858a25eea6e4ec8f7b566b72d3595a388
+[INFO] zookeeper-3.9.0-SNAPSHOT-sources.jar - SHA-512 : f1269d6e5a515b0aa1466a3bcdbf0a68fd09c3f8d39ff7b3ab71fcfed9d59cd0d0f304881d45b2c5ddcd97a019a340eb2a4a81c3b4df9a04ccef39c629c2f984
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ zookeeper ---
+[INFO] Installing /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT.jar
+[INFO] Installing /app/source/zookeeper-server/pom.xml to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT.pom
+[INFO] Installing /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT-osgi.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT-osgi.jar
+[INFO] Installing /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT-tests.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT-tests.jar
+[INFO] Installing /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT-sources.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT-sources.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Apache ZooKeeper 3.9.0-SNAPSHOT:
+[INFO] 
+[INFO] Apache ZooKeeper ................................... SUCCESS [  1.517 s]
+[INFO] Apache ZooKeeper - Jute ............................ SUCCESS [  3.539 s]
+[INFO] Apache ZooKeeper - Server .......................... SUCCESS [  6.224 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.422 s
+[INFO] Finished at: 2026-06-18T23:33:07Z
+[INFO] ------------------------------------------------------------------------
+------------------------------------------------INSIDE COVERAGE GENERATOR ---------------------------------------------------------------------
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Apache ZooKeeper                                                   [pom]
+[INFO] Apache ZooKeeper - Jute                                            [jar]
+[INFO] Apache ZooKeeper - Server                                          [jar]
+[INFO] 
+[INFO] --------------------< org.apache.zookeeper:parent >---------------------
+[INFO] Building Apache ZooKeeper 3.9.0-SNAPSHOT                           [1/3]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ parent ---
+[INFO] Deleting /app/source/target
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ parent ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ parent ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:test-jar (Jar Tests Package) @ parent ---
+[INFO] Skipping packaging of the test-jar
+[INFO] 
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ parent >>>
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ parent ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ parent ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ parent ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ parent <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ parent ---
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.1.1:jar (attach-javadocs) @ parent ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-site-plugin:3.7.1:attach-descriptor (attach-descriptor) @ parent ---
+[INFO] No site descriptor found: nothing to attach.
+[INFO] 
+[INFO] --- checksum-maven-plugin:1.8:artifacts (default) @ parent ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ parent ---
+[INFO] Installing /app/source/pom.xml to /root/.m2/repository/org/apache/zookeeper/parent/3.9.0-SNAPSHOT/parent-3.9.0-SNAPSHOT.pom
+[INFO] 
+[INFO] ----------------< org.apache.zookeeper:zookeeper-jute >-----------------
+[INFO] Building Apache ZooKeeper - Jute 3.9.0-SNAPSHOT                    [2/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ zookeeper-jute ---
+[INFO] Deleting /app/source/zookeeper-jute/target
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper-jute ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper-jute ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- javacc-maven-plugin:2.6:javacc (javacc) @ zookeeper-jute ---
+Java Compiler Compiler Version 5.0 (Parser Generator)
+(type "javacc" with no arguments for help)
+Reading from file /app/source/zookeeper-jute/src/main/java/org/apache/jute/compiler/generated/rcc.jj . . .
+Warning: Lookahead adequacy checking not being performed since option LOOKAHEAD is more than 1.  Set option FORCE_LA_CHECK to true to force checking.
+File "TokenMgrError.java" does not exist.  Will create one.
+File "ParseException.java" does not exist.  Will create one.
+File "Token.java" does not exist.  Will create one.
+File "SimpleCharStream.java" does not exist.  Will create one.
+Parser generated with 0 errors and 1 warnings.
+[INFO] Processed 1 grammar
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (pre-compile-jute) @ zookeeper-jute ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 36 source files to /app/source/zookeeper-jute/target/classes
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (generate-Java-Jute) @ zookeeper-jute ---
+/app/source/zookeeper-jute/src/main/resources/zookeeper.jute Parsed Successfully
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (generate-C-Jute) @ zookeeper-jute ---
+/app/source/zookeeper-jute/src/main/resources/zookeeper.jute Parsed Successfully
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (jute-as-dependency) @ zookeeper-jute ---
+[INFO] Source directory: /app/source/zookeeper-jute/target/generated-sources/java added.
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ zookeeper-jute ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /app/source/zookeeper-jutesrc/main/java/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ zookeeper-jute ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 108 source files to /app/source/zookeeper-jute/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ zookeeper-jute ---
+[INFO] Not copying test resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ zookeeper-jute ---
+[INFO] Not compiling test sources
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.22.1:test (default-test) @ zookeeper-jute ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:jar (default-jar) @ zookeeper-jute ---
+[INFO] Building jar: /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:test-jar (Jar Tests Package) @ zookeeper-jute ---
+[INFO] Skipping packaging of the test-jar
+[INFO] 
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ zookeeper-jute >>>
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper-jute ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper-jute ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper-jute ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- javacc-maven-plugin:2.6:javacc (javacc) @ zookeeper-jute ---
+[INFO] Skipping - all parsers are up to date
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (pre-compile-jute) @ zookeeper-jute ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 108 source files to /app/source/zookeeper-jute/target/classes
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (generate-Java-Jute) @ zookeeper-jute ---
+/app/source/zookeeper-jute/src/main/resources/zookeeper.jute Parsed Successfully
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (generate-C-Jute) @ zookeeper-jute ---
+/app/source/zookeeper-jute/src/main/resources/zookeeper.jute Parsed Successfully
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (jute-as-dependency) @ zookeeper-jute ---
+[INFO] Source directory: /app/source/zookeeper-jute/target/generated-sources/java added.
+[INFO] 
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ zookeeper-jute <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ zookeeper-jute ---
+[INFO] Building jar: /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.1.1:jar (attach-javadocs) @ zookeeper-jute ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-site-plugin:3.7.1:attach-descriptor (attach-descriptor) @ zookeeper-jute ---
+[INFO] Skipping because packaging 'jar' is not pom.
+[INFO] 
+[INFO] --- maven-bundle-plugin:5.1.1:bundle (build bundle) @ zookeeper-jute ---
+[INFO] 
+[INFO] --- checksum-maven-plugin:1.8:artifacts (default) @ zookeeper-jute ---
+[INFO] zookeeper-jute-3.9.0-SNAPSHOT.jar - SHA-512 : fff94fc46fcfd6f5302b7c78518ae28220d93bc841556c831cd2961bff374ea9f245196e2f4669148b9a50e49d8d9273646a18ef9e58ada063b055b429dfa3f9
+[INFO] zookeeper-jute-3.9.0-SNAPSHOT-sources.jar - SHA-512 : 0078b275b235264eb2f2c6aaafcb006f02cc637c4a87e9a96ff7cefe2c8baca14adace0a8057dee4e52860a4358d199d336d0c798e19d4f1b76df36c6a450838
+[INFO] zookeeper-jute-3.9.0-SNAPSHOT-osgi.jar - SHA-512 : e4c6f172c6df654591bf664757f93865b781a696e8192778e5c8d13614e3d3f73299dc86cd99f6dce6d14f9aa843d6dffe35ac7cde1febde86428dbec543fa52
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ zookeeper-jute ---
+[INFO] Installing /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT.jar
+[INFO] Installing /app/source/zookeeper-jute/pom.xml to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT.pom
+[INFO] Installing /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT-sources.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT-sources.jar
+[INFO] Installing /app/source/zookeeper-jute/target/zookeeper-jute-3.9.0-SNAPSHOT-osgi.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper-jute/3.9.0-SNAPSHOT/zookeeper-jute-3.9.0-SNAPSHOT-osgi.jar
+[INFO] 
+[INFO] -------------------< org.apache.zookeeper:zookeeper >-------------------
+[INFO] Building Apache ZooKeeper - Server 3.9.0-SNAPSHOT                  [3/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ zookeeper ---
+[INFO] Deleting /app/source/zookeeper-server/target
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:timestamp-property (build-time) @ zookeeper ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:parse-version (parse-version) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (default) @ zookeeper ---
+[INFO] Source directory: /app/source/zookeeper-server/target/generated-sources/java added.
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:copy-resources (prepare-filtered-java-source) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /app/source/zookeeper-serversrc/main/java/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ zookeeper ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 372 source files to /app/source/zookeeper-server/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ zookeeper ---
+[INFO] Not copying test resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ zookeeper ---
+[INFO] Not compiling test sources
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.22.1:test (default-test) @ zookeeper ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:jar (default-jar) @ zookeeper ---
+[INFO] Building jar: /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-dependency-plugin:3.1.1:copy-dependencies (copy-dependencies) @ zookeeper ---
+[INFO] Copying spotbugs-annotations-4.0.2.jar to /app/source/zookeeper-server/target/lib/spotbugs-annotations-4.0.2.jar
+[INFO] Copying jsr305-3.0.2.jar to /app/source/zookeeper-server/target/lib/jsr305-3.0.2.jar
+[INFO] Copying hamcrest-library-2.2.jar to /app/source/zookeeper-server/target/lib/hamcrest-library-2.2.jar
+[INFO] Copying hamcrest-core-2.2.jar to /app/source/zookeeper-server/target/lib/hamcrest-core-2.2.jar
+[INFO] Copying hamcrest-2.2.jar to /app/source/zookeeper-server/target/lib/hamcrest-2.2.jar
+[INFO] Copying commons-collections4-4.4.jar to /app/source/zookeeper-server/target/lib/commons-collections4-4.4.jar
+[INFO] Copying zookeeper-jute-3.9.0-SNAPSHOT.jar to /app/source/zookeeper-server/target/lib/zookeeper-jute-3.9.0-SNAPSHOT.jar
+[INFO] Copying commons-cli-1.4.jar to /app/source/zookeeper-server/target/lib/commons-cli-1.4.jar
+[INFO] Copying audience-annotations-0.12.0.jar to /app/source/zookeeper-server/target/lib/audience-annotations-0.12.0.jar
+[INFO] Copying netty-handler-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-handler-4.1.76.Final.jar
+[INFO] Copying netty-common-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-common-4.1.76.Final.jar
+[INFO] Copying netty-resolver-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-resolver-4.1.76.Final.jar
+[INFO] Copying netty-buffer-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-buffer-4.1.76.Final.jar
+[INFO] Copying netty-transport-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-transport-4.1.76.Final.jar
+[INFO] Copying netty-codec-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-codec-4.1.76.Final.jar
+[INFO] Copying netty-transport-native-epoll-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-transport-native-epoll-4.1.76.Final.jar
+[INFO] Copying netty-transport-native-unix-common-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-transport-native-unix-common-4.1.76.Final.jar
+[INFO] Copying netty-transport-classes-epoll-4.1.76.Final.jar to /app/source/zookeeper-server/target/lib/netty-transport-classes-epoll-4.1.76.Final.jar
+[INFO] Copying slf4j-api-1.7.30.jar to /app/source/zookeeper-server/target/lib/slf4j-api-1.7.30.jar
+[INFO] Copying logback-core-1.2.10.jar to /app/source/zookeeper-server/target/lib/logback-core-1.2.10.jar
+[INFO] Copying logback-classic-1.2.10.jar to /app/source/zookeeper-server/target/lib/logback-classic-1.2.10.jar
+[INFO] Copying jetty-server-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-server-9.4.43.v20210629.jar
+[INFO] Copying javax.servlet-api-3.1.0.jar to /app/source/zookeeper-server/target/lib/javax.servlet-api-3.1.0.jar
+[INFO] Copying jetty-http-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-http-9.4.43.v20210629.jar
+[INFO] Copying jetty-util-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-util-9.4.43.v20210629.jar
+[INFO] Copying jetty-io-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-io-9.4.43.v20210629.jar
+[INFO] Copying jetty-servlet-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-servlet-9.4.43.v20210629.jar
+[INFO] Copying jetty-security-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-security-9.4.43.v20210629.jar
+[INFO] Copying jetty-util-ajax-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-util-ajax-9.4.43.v20210629.jar
+[INFO] Copying jetty-client-9.4.43.v20210629.jar to /app/source/zookeeper-server/target/lib/jetty-client-9.4.43.v20210629.jar
+[INFO] Copying jackson-databind-2.13.2.1.jar to /app/source/zookeeper-server/target/lib/jackson-databind-2.13.2.1.jar
+[INFO] Copying jackson-annotations-2.13.2.jar to /app/source/zookeeper-server/target/lib/jackson-annotations-2.13.2.jar
+[INFO] Copying jackson-core-2.13.2.jar to /app/source/zookeeper-server/target/lib/jackson-core-2.13.2.jar
+[INFO] Copying bcprov-jdk15on-1.60.jar to /app/source/zookeeper-server/target/lib/bcprov-jdk15on-1.60.jar
+[INFO] Copying bcpkix-jdk15on-1.60.jar to /app/source/zookeeper-server/target/lib/bcpkix-jdk15on-1.60.jar
+[INFO] Copying jline-2.14.6.jar to /app/source/zookeeper-server/target/lib/jline-2.14.6.jar
+[INFO] Copying metrics-core-4.1.12.1.jar to /app/source/zookeeper-server/target/lib/metrics-core-4.1.12.1.jar
+[INFO] Copying kerb-core-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-core-2.0.0.jar
+[INFO] Copying kerby-pkix-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-pkix-2.0.0.jar
+[INFO] Copying kerby-asn1-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-asn1-2.0.0.jar
+[INFO] Copying kerby-util-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-util-2.0.0.jar
+[INFO] Copying kerb-simplekdc-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-simplekdc-2.0.0.jar
+[INFO] Copying kerb-client-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-client-2.0.0.jar
+[INFO] Copying kerb-common-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-common-2.0.0.jar
+[INFO] Copying kerb-crypto-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-crypto-2.0.0.jar
+[INFO] Copying kerb-util-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-util-2.0.0.jar
+[INFO] Copying token-provider-2.0.0.jar to /app/source/zookeeper-server/target/lib/token-provider-2.0.0.jar
+[INFO] Copying nimbus-jose-jwt-4.41.2.jar to /app/source/zookeeper-server/target/lib/nimbus-jose-jwt-4.41.2.jar
+[INFO] Copying jcip-annotations-1.0-1.jar to /app/source/zookeeper-server/target/lib/jcip-annotations-1.0-1.jar
+[INFO] Copying json-smart-2.3.jar to /app/source/zookeeper-server/target/lib/json-smart-2.3.jar
+[INFO] Copying accessors-smart-1.2.jar to /app/source/zookeeper-server/target/lib/accessors-smart-1.2.jar
+[INFO] Copying asm-5.0.4.jar to /app/source/zookeeper-server/target/lib/asm-5.0.4.jar
+[INFO] Copying kerb-admin-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-admin-2.0.0.jar
+[INFO] Copying kerb-server-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-server-2.0.0.jar
+[INFO] Copying kerb-identity-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerb-identity-2.0.0.jar
+[INFO] Copying kerby-xdr-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-xdr-2.0.0.jar
+[INFO] Copying kerby-config-2.0.0.jar to /app/source/zookeeper-server/target/lib/kerby-config-2.0.0.jar
+[INFO] Copying mockito-core-3.6.28.jar to /app/source/zookeeper-server/target/lib/mockito-core-3.6.28.jar
+[INFO] Copying byte-buddy-1.10.18.jar to /app/source/zookeeper-server/target/lib/byte-buddy-1.10.18.jar
+[INFO] Copying byte-buddy-agent-1.10.18.jar to /app/source/zookeeper-server/target/lib/byte-buddy-agent-1.10.18.jar
+[INFO] Copying objenesis-3.1.jar to /app/source/zookeeper-server/target/lib/objenesis-3.1.jar
+[INFO] Copying jmockit-1.48.jar to /app/source/zookeeper-server/target/lib/jmockit-1.48.jar
+[INFO] Copying junit-jupiter-api-5.6.2.jar to /app/source/zookeeper-server/target/lib/junit-jupiter-api-5.6.2.jar
+[INFO] Copying apiguardian-api-1.1.0.jar to /app/source/zookeeper-server/target/lib/apiguardian-api-1.1.0.jar
+[INFO] Copying opentest4j-1.2.0.jar to /app/source/zookeeper-server/target/lib/opentest4j-1.2.0.jar
+[INFO] Copying junit-platform-commons-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-commons-1.6.2.jar
+[INFO] Copying junit-jupiter-engine-5.6.2.jar to /app/source/zookeeper-server/target/lib/junit-jupiter-engine-5.6.2.jar
+[INFO] Copying junit-platform-engine-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-engine-1.6.2.jar
+[INFO] Copying junit-jupiter-params-5.6.2.jar to /app/source/zookeeper-server/target/lib/junit-jupiter-params-5.6.2.jar
+[INFO] Copying junit-platform-runner-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-runner-1.6.2.jar
+[INFO] Copying junit-4.13.jar to /app/source/zookeeper-server/target/lib/junit-4.13.jar
+[INFO] Copying junit-platform-launcher-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-launcher-1.6.2.jar
+[INFO] Copying junit-platform-suite-api-1.6.2.jar to /app/source/zookeeper-server/target/lib/junit-platform-suite-api-1.6.2.jar
+[INFO] Copying snappy-java-1.1.7.7.jar to /app/source/zookeeper-server/target/lib/snappy-java-1.1.7.7.jar
+[INFO] Copying commons-io-2.11.0.jar to /app/source/zookeeper-server/target/lib/commons-io-2.11.0.jar
+[INFO] 
+[INFO] --- maven-bundle-plugin:5.1.1:bundle (build bundle) @ zookeeper ---
+[WARNING] Bundle org.apache.zookeeper:zookeeper:jar:3.9.0-SNAPSHOT : Split package, multiple jars provide the same package:org/apache/zookeeper/server/quorum
+Use Import/Export Package directive -split-package:=(merge-first|merge-last|error|first) to get rid of this warning
+Package found in   [Jar:., Jar:zookeeper-jute]
+Class path         [Jar:., Jar:spotbugs-annotations, Jar:jsr305, Jar:zookeeper-jute, Jar:commons-cli, Jar:audience-annotations, Jar:netty-handler, Jar:netty-common, Jar:netty-resolver, Jar:netty-buffer, Jar:netty-transport, Jar:netty-codec, Jar:netty-transport-native-epoll, Jar:netty-transport-native-unix-common, Jar:netty-transport-classes-epoll, Jar:slf4j-api, Jar:logback-core, Jar:logback-classic, Jar:jetty-server, Jar:javax.servlet-api, Jar:jetty-http, Jar:jetty-util, Jar:jetty-io, Jar:jetty-servlet, Jar:jetty-security, Jar:jetty-util-ajax, Jar:jetty-client, Jar:jackson-databind, Jar:jackson-annotations, Jar:jackson-core, Jar:jline, Jar:metrics-core, Jar:snappy-java, Jar:commons-io]
+[WARNING] Bundle org.apache.zookeeper:zookeeper:jar:3.9.0-SNAPSHOT : Split package, multiple jars provide the same package:org/apache/zookeeper/server/persistence
+Use Import/Export Package directive -split-package:=(merge-first|merge-last|error|first) to get rid of this warning
+Package found in   [Jar:., Jar:zookeeper-jute]
+Class path         [Jar:., Jar:spotbugs-annotations, Jar:jsr305, Jar:zookeeper-jute, Jar:commons-cli, Jar:audience-annotations, Jar:netty-handler, Jar:netty-common, Jar:netty-resolver, Jar:netty-buffer, Jar:netty-transport, Jar:netty-codec, Jar:netty-transport-native-epoll, Jar:netty-transport-native-unix-common, Jar:netty-transport-classes-epoll, Jar:slf4j-api, Jar:logback-core, Jar:logback-classic, Jar:jetty-server, Jar:javax.servlet-api, Jar:jetty-http, Jar:jetty-util, Jar:jetty-io, Jar:jetty-servlet, Jar:jetty-security, Jar:jetty-util-ajax, Jar:jetty-client, Jar:jackson-databind, Jar:jackson-annotations, Jar:jackson-core, Jar:jline, Jar:metrics-core, Jar:snappy-java, Jar:commons-io]
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:test-jar (Jar Tests Package) @ zookeeper ---
+[INFO] Skipping packaging of the test-jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:test-jar (publish-test-jar) @ zookeeper ---
+[INFO] Skipping packaging of the test-jar
+[INFO] 
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ zookeeper >>>
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:timestamp-property (build-time) @ zookeeper ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:parse-version (parse-version) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (default) @ zookeeper ---
+[INFO] Source directory: /app/source/zookeeper-server/target/generated-sources/java added.
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:copy-resources (prepare-filtered-java-source) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ zookeeper <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ zookeeper ---
+[INFO] Building jar: /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.1.1:jar (attach-javadocs) @ zookeeper ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-site-plugin:3.7.1:attach-descriptor (attach-descriptor) @ zookeeper ---
+[INFO] Skipping because packaging 'jar' is not pom.
+[INFO] 
+[INFO] --- checksum-maven-plugin:1.8:artifacts (default) @ zookeeper ---
+[INFO] zookeeper-3.9.0-SNAPSHOT.jar - SHA-512 : 8f6be38297d942f1d092e6a2cddb4654d1a48142cc994c4c651e89c05cf95b168c60a3d5efce474d8cc6d37c627f47406faa8c3629af009e8e9a469929eb62c6
+[INFO] zookeeper-3.9.0-SNAPSHOT-osgi.jar - SHA-512 : 3a579b6a6f0a395a301b92991df4fb98ad0a0ceafa61a527c3828cafd818d4338edfe7f59efa1ac552f5b9bae155c00a203b1c73c0292dc9d4978d1d413a22ec
+[INFO] zookeeper-3.9.0-SNAPSHOT-sources.jar - SHA-512 : f1269d6e5a515b0aa1466a3bcdbf0a68fd09c3f8d39ff7b3ab71fcfed9d59cd0d0f304881d45b2c5ddcd97a019a340eb2a4a81c3b4df9a04ccef39c629c2f984
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ zookeeper ---
+[INFO] Installing /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT.jar
+[INFO] Installing /app/source/zookeeper-server/pom.xml to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT.pom
+[INFO] Installing /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT-osgi.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT-osgi.jar
+[INFO] Installing /app/source/zookeeper-server/target/zookeeper-3.9.0-SNAPSHOT-sources.jar to /root/.m2/repository/org/apache/zookeeper/zookeeper/3.9.0-SNAPSHOT/zookeeper-3.9.0-SNAPSHOT-sources.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Apache ZooKeeper 3.9.0-SNAPSHOT:
+[INFO] 
+[INFO] Apache ZooKeeper ................................... SUCCESS [  2.675 s]
+[INFO] Apache ZooKeeper - Jute ............................ SUCCESS [  5.519 s]
+[INFO] Apache ZooKeeper - Server .......................... SUCCESS [  3.550 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.949 s
+[INFO] Finished at: 2026-06-18T23:33:20Z
+[INFO] ------------------------------------------------------------------------
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< org.apache.zookeeper:zookeeper >-------------------
+[INFO] Building Apache ZooKeeper - Server 3.9.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:timestamp-property (build-time) @ zookeeper ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:parse-version (parse-version) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (default) @ zookeeper ---
+[INFO] Source directory: /app/source/zookeeper-server/target/generated-sources/java added.
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:copy-resources (prepare-filtered-java-source) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /app/source/zookeeper-serversrc/main/java/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ zookeeper ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 372 source files to /app/source/zookeeper-server/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 37 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ zookeeper ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 367 source files to /app/source/zookeeper-server/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.22.1:test (default-test) @ zookeeper ---
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.apache.zookeeper.server.RequestThrottlerTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.391 s - in org.apache.zookeeper.server.RequestThrottlerTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  12.098 s
+[INFO] Finished at: 2026-06-18T23:33:33Z
+[INFO] ------------------------------------------------------------------------
+ERROR: JaCoCo exec not found for iter #1 at /app/source/testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_1.exec
+Last few 'jacoco' lines from the log:
+ERROR: JaCoCo exec not found for iter #1 at /app/source/testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_1.exec
+Last few 'jacoco' lines from the log:
+Coverage failed; continuing
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< org.apache.zookeeper:zookeeper >-------------------
+[INFO] Building Apache ZooKeeper - Server 3.9.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- mavanagaiata:0.9.4:commit (find-current-git-revision) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.8:run (set-hostname-property) @ zookeeper ---
+[INFO] Executing tasks
+
+main:
+[INFO] Executed tasks
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:timestamp-property (build-time) @ zookeeper ---
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:parse-version (parse-version) @ zookeeper ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven-version) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-commons-lang3) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (banned-json-simple) @ zookeeper ---
+[INFO] Skipping Rule Enforcement.
+[INFO] 
+[INFO] --- build-helper-maven-plugin:3.0.0:add-source (default) @ zookeeper ---
+[INFO] Source directory: /app/source/zookeeper-server/target/generated-sources/java added.
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:copy-resources (prepare-filtered-java-source) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /app/source/zookeeper-serversrc/main/java/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ zookeeper ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 372 source files to /app/source/zookeeper-server/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ zookeeper ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 37 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ zookeeper ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 367 source files to /app/source/zookeeper-server/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.22.1:test (default-test) @ zookeeper ---
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.apache.zookeeper.server.RequestThrottlerTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.444 s - in org.apache.zookeeper.server.RequestThrottlerTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  12.600 s
+[INFO] Finished at: 2026-06-18T23:33:46Z
+[INFO] ------------------------------------------------------------------------
+Summary:
+Passes: 1
+Failures: 0
+Errors: 0
+con_ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled
+con_ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 737B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/maven:3.8.6-openjdk-8
+#2 DONE 0.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/maven:3.8.6-openjdk-8@sha256:ff18d86faefa15d1445d0fa4874408cc96dec068eb3487a0fc6d07f359a24607
+#4 DONE 0.0s
+
+#5 [2/5] WORKDIR /app
+#5 CACHED
+
+#6 [3/5] RUN apt-get update &&     apt-get install -y autoconf automake libtool curl make g++ unzip python3 python3-pip &&     ln -s /usr/bin/python3 /usr/bin/python &&     rm -rf /var/lib/apt/lists/*
+#6 CACHED
+
+#7 [4/5] RUN apt-get update &&     apt-get install -y xmlstarlet &&     rm -rf /var/lib/apt/lists/*
+#7 CACHED
+
+#8 [5/5] RUN pip3 install beautifulsoup4 lxml
+#8 CACHED
+
+#9 exporting to image
+#9 exporting layers done
+#9 writing image sha256:74c2d8f7d7f7f5eca8e0788cd8e092954453c94a136bdb88ac6b8c010155e341 done
+#9 naming to docker.io/library/flaky_base_jdk8 done
+#9 DONE 0.0s
+Warning: Lookahead adequacy checking not being performed since option LOOKAHEAD is more than 1.  Set option FORCE_LA_CHECK to true to force checking.
++ mvn -pl zookeeper-server test -Dtest=org.apache.zookeeper.server.RequestThrottlerTest#testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled -Ddependency-check.skip=true -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true
++ tee mvn-test-0.log
++ sed -r 's/\x1B\[[0-9;]*[a-zA-Z]//g' mvn-test-0.log
++ egrep '^Running|^\[INFO\] Running '
++ rev
++ cut '-d ' -f1
++ read -r g
++ rev
+++ find . -name TEST-org.apache.zookeeper.server.RequestThrottlerTest.xml -not -path '*target/surefire-reports/junitreports/*'
++ f=./zookeeper-server/target/surefire-reports/TEST-org.apache.zookeeper.server.RequestThrottlerTest.xml
+++ echo ./zookeeper-server/target/surefire-reports/TEST-org.apache.zookeeper.server.RequestThrottlerTest.xml
+++ wc -l
++ fcount=1
++ [[ 1 == \1 ]]
++ python /app/source/python-scripts/parse_surefire_report.py ./zookeeper-server/target/surefire-reports/TEST-org.apache.zookeeper.server.RequestThrottlerTest.xml 0 org.apache.zookeeper.server.RequestThrottlerTest#testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled
+/app/source/python-scripts/parse_surefire_report.py:12: DeprecationWarning: Call to deprecated method findAll. (Replaced by find_all) -- Deprecated since version 4.0.0.
+  for f in y.testsuite.findAll("testcase"):
++ break
++ set +x
+
+2026-06-18 19:33:57,142  INFO     After coverage helper, found JaCoCo reports: []
+2026-06-18 19:33:57,143  WARNING  No ReproFlake JaCoCo XML reports found under: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/data/ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled
+2026-06-18 19:33:57,143  WARNING  ReproFlake helper coverage produced no usable XML; using nearby-file scope.
+2026-06-18 19:33:57,144  INFO     Using nearby-file scope: 358 file(s)
+2026-06-18 19:33:58,107  INFO     Call graph: 3585 function definitions across 358 files.
+2026-06-18 19:34:07,563  INFO     HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 19:34:16,705  INFO     HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 19:34:25,001  INFO     HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 19:34:28,539  INFO     HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 19:34:28,539  INFO     smart_bfs: 13 nodes collected → 6 after global filter (started from: ['testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled'])
+2026-06-18 19:34:28,540  INFO     Context: 6 function nodes from 4 files
+2026-06-18 19:34:28,541  INFO       Generating thought P=1/2 for context M=1/3
+2026-06-18 19:34:45,548  INFO     HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 19:34:45,549  INFO       Thought preview: <THOUGHT> Root-cause category: Timing/race/asynchronous behavior  Root-cause explanation: The test `testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled` sends 10 requests asynchronously and waits for all 10 to be submitted via `submitted.await(5, TimeUnit.SECONDS)`. After the await, i
+2026-06-18 19:34:45,549  INFO       Generating fix N=1/3 from M=1/3, P=1/2 (candidate 1/18)
+2026-06-18 19:34:56,646  INFO     HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 19:34:57,532  INFO     Added module prefix to Fixed.patch: zookeeper-server
+2026-06-18 19:34:57,533  INFO     Validating fix with ReproFlake helper: bash /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/flaky_analysis_tool_td.sh ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled ZOOKEEPER-4327 zookeeper-server 'org.apache.zookeeper.server.RequestThrottlerTest#testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled' 100 Fixed (cwd=/home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run)
+2026-06-18 20:00:00,407  INFO     [fixed-result] Fixed result dir: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/data/ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled/result/Fixed
+2026-06-18 20:00:00,407  INFO     [fixed-result] Fixed result dir exists: True
+2026-06-18 20:00:00,639  INFO     [fixed-result] important PASS/FAIL lines for Fixed only:
+<no marker lines found>
+2026-06-18 20:00:00,646  INFO     [fixed-result] validation summary:
+Build: PASS
+2026-06-18 20:00:00,674  INFO     [fixed-result] full Fixed validation output saved to: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/flakyguard-validation-debug/ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_Fixed_validation_output.log
+2026-06-18 20:00:00,776  INFO     Fix validated by ReproFlake helper on patched Fixed artifact (100 iterations).
+2026-06-18 20:00:00,777  INFO     ✓ Fix validated! Patch saved to: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/data/ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_work_repo/Flaky/patches/testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_M1_P1_N1_candidate_1_20260618_193456.patch
+
+[1/3] Reproducing flaky failure (script issue_id=ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled)…
+✓ Failure reproduced.
+  Error: File "ParseException.java" does not exist.  Will create one.
+File "ParseException.java" does not exist.  Will create one
+
+[2/3] Running fixing pipeline (M=3, P=2, N=3, candidates=18)…
+
+[3/3] Result:
+✓ Fix found and validated.
+  Root cause: The flakiness occurs because `submitted.await()` returns as soon as all 10 requests have been passed to `submitRequest()`, but the `prep_processor_request_queued` metric is incremented asynchronously when requests actually enter the `PrepRequestProcessor` queue. Additionally, the global outstanding limit throttling (which disables reading from the connection) operates in the I/O thread and may not have fully stabilized by the time the assertion runs immediately after the latch.
+
+The fix replaces the immediate assertion with a polling loop (similar to the pattern used in `testDropStaleRequests` with `while (zks.getInflight() > 0) { Thread.sleep(50); }`) that waits up to 5 seconds for the `prep_processor_request_queued` metric to reach the expected value of `GLOBAL_OUTSTANDING_LIMIT + 2`. This allows the system to reach a stable state before asserting, eliminating the race condition.
+  Patch saved to: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/another_run/td_run/new_td_run/data/ZOOKEEPER-4327-testGlobalOutstandingRequestThrottlingWithRequestThrottlerDisabled_work_repo/Flaky/patches/

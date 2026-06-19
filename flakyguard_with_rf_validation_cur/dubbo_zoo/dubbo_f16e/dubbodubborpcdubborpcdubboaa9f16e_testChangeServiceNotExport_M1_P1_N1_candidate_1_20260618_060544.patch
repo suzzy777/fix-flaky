@@ -1,0 +1,10 @@
+--- a/dubbo-rpc/dubbo-rpc-dubbo/src/test/java/org/apache/dubbo/rpc/protocol/dubbo/telnet/ChangeTelnetHandlerTest.java
++++ b/dubbo-rpc/dubbo-rpc-dubbo/src/test/java/org/apache/dubbo/rpc/protocol/dubbo/telnet/ChangeTelnetHandlerTest.java
+@@ -52,6 +52,7 @@
+     @SuppressWarnings("unchecked")
+     @Before
+     public void setUp() {
++        ProtocolUtils.closeAll();
+         mockChannel = mock(Channel.class);
+         mockInvoker = mock(Invoker.class);
+         given(mockChannel.getAttribute("telnet.service")).willReturn("org.apache.dubbo.rpc.protocol.dubbo.support.DemoService");

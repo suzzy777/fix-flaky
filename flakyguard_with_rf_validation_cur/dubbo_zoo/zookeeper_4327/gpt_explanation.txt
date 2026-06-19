@@ -1,0 +1,17 @@
+Yes, it makes sense.
+
+The original test checks the metric immediately:
+
+assertEquals(expected, currentMetric);
+
+But the metric is updated asynchronously, so it may not be visible at that exact moment.
+
+The patch changes it to:
+
+wait up to 5 seconds
+check every 50 ms
+pass as soon as metric reaches expected value
+
+That is a standard timing-flaky fix: replace an immediate assertion with an eventual assertion.
+
+One small improvement: use System.nanoTime() instead of currentTimeMillis() for deadlines, but conceptually the fix is correct.

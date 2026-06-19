@@ -1,0 +1,22 @@
+--- a/zookeeper-server/src/test/java/org/apache/zookeeper/server/RequestThrottlerTest.java
++++ b/zookeeper-server/src/test/java/org/apache/zookeeper/server/RequestThrottlerTest.java
+@@ -343,8 +343,17 @@
+             // before throttling. For the next request, we will throttle by disabling receiving future requests but we still
+             // allow this single request coming in. So the total number of queued requests in processing pipeline would
+             // be GLOBAL_OUTSTANDING_LIMIT + 2.
+-            assertEquals(Integer.parseInt(GLOBAL_OUTSTANDING_LIMIT) + 2,
+-                    (long) MetricsUtils.currentServerMetrics().get("prep_processor_request_queued"));
++            long expectedQueued = Integer.parseInt(GLOBAL_OUTSTANDING_LIMIT) + 2;
++            long deadline = System.currentTimeMillis() + 5000;
++            long actualQueued = 0;
++            while (System.currentTimeMillis() < deadline) {
++                actualQueued = (long) MetricsUtils.currentServerMetrics().get("prep_processor_request_queued");
++                if (actualQueued == expectedQueued) {
++                    break;
++                }
++                Thread.sleep(50);
++            }
++            assertEquals(expectedQueued, actualQueued);
+ 
+             resumeProcess.countDown();
+         } catch (Exception e) {

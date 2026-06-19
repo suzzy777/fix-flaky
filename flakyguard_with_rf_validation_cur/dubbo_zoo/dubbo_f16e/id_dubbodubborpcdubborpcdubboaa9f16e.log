@@ -1,0 +1,47 @@
+2026-06-18 06:03:49,332  INFO     Using ReproFlake artifact source as repo_root: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/data/dubbodubborpcdubborpcdubboaa9f16e_work_repo/Flaky
+2026-06-18 06:03:49,334  INFO     Resolved repo_root: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/data/dubbodubborpcdubborpcdubboaa9f16e_work_repo/Flaky
+2026-06-18 06:03:49,334  INFO     Resolved test_file: dubbo-rpc/dubbo-rpc-dubbo/src/test/java/org/apache/dubbo/rpc/protocol/dubbo/telnet/ChangeTelnetHandlerTest.java
+2026-06-18 06:03:49,334  INFO     Resolved test_func: testChangeServiceNotExport
+2026-06-18 06:03:49,334  INFO     CSV module for this issue: 'dubbo-rpc/dubbo-rpc-dubbo'
+2026-06-18 06:03:49,334  INFO     Final repo_root used by FlakyGuard: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/data/dubbodubborpcdubborpcdubboaa9f16e_work_repo/Flaky
+2026-06-18 06:03:49,334  INFO     Final test_file used by FlakyGuard: dubbo-rpc/dubbo-rpc-dubbo/src/test/java/org/apache/dubbo/rpc/protocol/dubbo/telnet/ChangeTelnetHandlerTest.java
+2026-06-18 06:03:49,698  INFO     Reproducing flaky test with script: bash ./single_runner.sh dubbodubborpcdubborpcdubboaa9f16e (cwd=/home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation)
+2026-06-18 06:03:49,698  INFO     For FlakyGuard reproduction only, forcing ReproFlake CODE_VERSION=Flaky and iterations=1.
+2026-06-18 06:04:30,112  INFO     Failure reproduced via script.
+2026-06-18 06:04:30,112  INFO     Repair budget: M=3 context attempts × P=2 thoughts/context × N=3 fixes/thought = 18 candidate fixes
+2026-06-18 06:04:30,113  INFO     ─── Context attempt M=1/3: collecting context ───
+2026-06-18 06:04:30,113  INFO     Collecting JaCoCo coverage with ReproFlake helper: bash /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/flaky_analysis_tool_od.sh dubbodubborpcdubborpcdubboaa9f16e dubbodubborpcdubborpcdubboaa9f16e dubbo-rpc/dubbo-rpc-dubbo 'org.apache.dubbo.rpc.protocol.dubbo.ReferenceCountExchangeClientTest#test_counter_error' 'org.apache.dubbo.rpc.protocol.dubbo.telnet.ChangeTelnetHandlerTest#testChangeServiceNotExport' 1 Flaky
+2026-06-18 06:05:25,217  WARNING  No ReproFlake JaCoCo XML reports found under: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/data/dubbodubborpcdubborpcdubboaa9f16e
+2026-06-18 06:05:25,217  WARNING  ReproFlake jar-based coverage produced no usable XML; trying old Maven JaCoCo fallback.
+2026-06-18 06:05:25,217  WARNING  ReproFlake helper coverage produced no usable XML; using nearby-file scope.
+2026-06-18 06:05:25,217  INFO     Using nearby-file scope: 27 file(s)
+2026-06-18 06:05:25,268  INFO     Call graph: 230 function definitions across 27 files.
+2026-06-18 06:05:25,268  INFO     smart_bfs: 1 nodes collected → 1 after global filter (started from: ['testChangeServiceNotExport'])
+2026-06-18 06:05:25,268  INFO     Context: 1 function nodes from 1 files
+2026-06-18 06:05:25,268  INFO       Generating thought P=1/2 for context M=1/3
+2026-06-18 06:05:38,133  INFO     HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 06:05:38,222  INFO       Thought preview: <THOUGHT> Root-cause category: Shared state or polluted global/static state  Root-cause explanation: The `testChangeServiceNotExport` test expects that no service named "demo" is exported, so it should return "No such service demo". However, when this test runs after another test (like `testChangePa
+2026-06-18 06:05:38,222  INFO       Generating fix N=1/3 from M=1/3, P=1/2 (candidate 1/18)
+2026-06-18 06:05:44,426  INFO     HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 06:05:46,236  INFO     Added module prefix to Fixed.patch: dubbo-rpc/dubbo-rpc-dubbo
+2026-06-18 06:05:46,240  INFO     Validating fix with ReproFlake helper: bash /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/flaky_analysis_tool_od.sh dubbodubborpcdubborpcdubboaa9f16e dubbodubborpcdubborpcdubboaa9f16e dubbo-rpc/dubbo-rpc-dubbo 'org.apache.dubbo.rpc.protocol.dubbo.ReferenceCountExchangeClientTest#test_counter_error' 'org.apache.dubbo.rpc.protocol.dubbo.telnet.ChangeTelnetHandlerTest#testChangeServiceNotExport' 100 Fixed (cwd=/home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation)
+2026-06-18 06:18:15,529  INFO     [fixed-result] Fixed result dir: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/data/dubbodubborpcdubborpcdubboaa9f16e/result/Fixed
+2026-06-18 06:18:15,529  INFO     [fixed-result] Fixed result dir exists: True
+2026-06-18 06:18:16,098  INFO     [fixed-result] important PASS/FAIL lines for Fixed only:
+<no marker lines found>
+2026-06-18 06:18:16,112  INFO     [fixed-result] validation summary:
+Build: PASS
+2026-06-18 06:18:16,155  INFO     [fixed-result] full Fixed validation output saved to: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/flakyguard-validation-debug/dubbodubborpcdubborpcdubboaa9f16e_Fixed_validation_output.log
+2026-06-18 06:18:16,435  INFO     Fix validated by ReproFlake helper on patched Fixed artifact (100 iterations).
+2026-06-18 06:18:16,436  INFO     ✓ Fix validated! Patch saved to: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/data/dubbodubborpcdubborpcdubboaa9f16e_work_repo/Flaky/patches/testChangeServiceNotExport_M1_P1_N1_candidate_1_20260618_060544.patch
+
+[1/3] Reproducing flaky failure (script issue_id=dubbodubborpcdubborpcdubboaa9f16e)…
+✓ Failure reproduced.
+  Error: [ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.34 s <<< FAILURE! - in org.apache.dubbo.rpc.pr
+
+[2/3] Running fixing pipeline (M=3, P=2, N=3, candidates=18)…
+
+[3/3] Result:
+✓ Fix found and validated.
+  Root cause: The flakiness occurs because `DubboProtocol` is a singleton that retains exported services between tests. When `testChangePath` (or similar tests that call `DubboProtocol.getDubboProtocol().export(mockInvoker)`) runs before `testChangeServiceNotExport`, the "demo" service remains exported in the singleton's state. The `@After` cleanup via `ProtocolUtils.closeAll()` may not fully take effect before the next test's setup begins, or the ordering causes the state to persist. By adding `ProtocolUtils.closeAll()` at the beginning of `setUp()` (the `@Before` method), we ensure that any leftover exported services from a previous test are cleared before each test starts, making `testChangeServiceNotExport` reliably find no exported "demo" service regardless of test execution order.
+  Patch saved to: /home/srafi/flakyguard/flakyguard_csv_repro_clean/flakyguard_with_rf_validation/data/dubbodubborpcdubborpcdubboaa9f16e_work_repo/Flaky/patches/
