@@ -100,20 +100,50 @@ def _get_ts_language(language: str):
             from tree_sitter_go import language as go_lang
             import tree_sitter as ts
             return ts.Language(go_lang())
+
         elif language == "python":
             from tree_sitter_python import language as py_lang
             import tree_sitter as ts
             return ts.Language(py_lang())
+
         elif language == "java":
             from tree_sitter_java import language as java_lang
             import tree_sitter as ts
             return ts.Language(java_lang())
+
         else:
             logger.warning("Unsupported language for tree-sitter: %s", language)
             return None
-    except ImportError:
-        logger.warning("tree-sitter bindings for '%s' not installed. Falling back to regex.", language)
+
+    except Exception as e:
+        logger.exception(
+            "Tree-sitter setup failed for '%s': %s",
+            language,
+            repr(e)
+        )
         return None
+
+# def _get_ts_language(language: str):
+#     """Load tree-sitter Language object for the given language string."""
+#     try:
+#         if language == "go":
+#             from tree_sitter_go import language as go_lang
+#             import tree_sitter as ts
+#             return ts.Language(go_lang())
+#         elif language == "python":
+#             from tree_sitter_python import language as py_lang
+#             import tree_sitter as ts
+#             return ts.Language(py_lang())
+#         elif language == "java":
+#             from tree_sitter_java import language as java_lang
+#             import tree_sitter as ts
+#             return ts.Language(java_lang())
+#         else:
+#             logger.warning("Unsupported language for tree-sitter: %s", language)
+#             return None
+#     except ImportError:
+#         logger.warning("tree-sitter bindings for '%s' not installed. Falling back to regex.", language)
+#         return None
 
 
 def _parse_file(filepath: str, language: str):
@@ -155,36 +185,24 @@ def _walk(node, visitor, *args):
         _walk(child, visitor, *args)
 
 
-def _collect_calls(
-    func_node,
-    language: str,
-    source: bytes,
-) -> set[tuple[str, int, int]]:
-    """Collect called function names together with their source-line ranges."""
+def _collect_call_names(func_node, language: str, source: bytes) -> set[str]:
+    """Collect all function names called within func_node's body."""
     call_types = _CALL_TYPES.get(language, set())
-    called: set[tuple[str, int, int]] = set()
+    called: set[str] = set()
 
     def visit(node):
-        if node.type not in call_types:
-            return
-
-        # Go / Python: function field is 'function'; Java usually uses 'name'.
-        fn = node.child_by_field_name("function") or node.child_by_field_name("name")
-        if fn is None:
-            return
-
-        # For receiver.method(...), retain only the called method name.
-        if fn.type in ("selector_expression", "member_expression", "field_access"):
-            field_child = fn.child_by_field_name("field") or fn.child_by_field_name("member")
-            if field_child:
-                fn = field_child
-
-        if fn.type == "identifier":
-            called.add((
-                _node_text(fn, source),
-                node.start_point[0] + 1,
-                node.end_point[0] + 1,
-            ))
+        if node.type in call_types:
+            # Go / Python: function field is 'function', Java: 'name'
+            fn = node.child_by_field_name("function") or node.child_by_field_name("name")
+            if fn is None:
+                return
+            # May be a selector expression (method call): take the rightmost identifier
+            if fn.type in ("selector_expression", "member_expression", "field_access"):
+                field_child = fn.child_by_field_name("field") or fn.child_by_field_name("member")
+                if field_child:
+                    fn = field_child
+            if fn.type == "identifier":
+                called.add(_node_text(fn, source))
 
     _walk(func_node, visit)
     return called
@@ -234,60 +252,28 @@ class CallGraphBuilder:
         language:  "go" | "python" | "java"
     """
 
-    def __init__(
-        self,
-        repo_root: str,
-        files: list[str],
-        language: str = "go",
-        covered_lines: dict[str, set[int]] | None = None,
-        always_keep: set[tuple[str, str]] | None = None,
-    ):
+    def __init__(self, repo_root: str, files: list[str], language: str = "go"):
         self.repo_root = repo_root
         self.language = language.lower()
-        self.covered_lines = {
-            os.path.abspath(path): set(lines)
-            for path, lines in (covered_lines or {}).items()
-        }
-        self.always_keep = {
-            (os.path.abspath(path), name)
-            for path, name in (always_keep or set())
-        }
-
         ext = _EXTENSIONS.get(self.language, "")
         self.files: list[str] = []
         for f in files:
             path = f if os.path.isabs(f) else os.path.join(repo_root, f)
-            path = os.path.abspath(path)
             if os.path.isfile(path) and (not ext or path.endswith(ext)):
                 self.files.append(path)
 
-    def _range_is_covered(
-        self,
-        filepath: str,
-        start_line: int,
-        end_line: int,
-    ) -> bool:
-        """Return whether runtime coverage touched this source range."""
-        if not self.covered_lines:
-            return True
-
-        lines = self.covered_lines.get(os.path.abspath(filepath), set())
-        return any(start_line <= line <= end_line for line in lines)
-
     def build(self) -> CallGraph:
-        """Parse files and return a graph pruned by runtime-covered source lines."""
+        """Parse all files and return a CallGraph."""
         graph = CallGraph()
         func_def_types = _FUNC_DEF_TYPES.get(self.language, set())
-        definitions_seen = 0
 
         for filepath in self.files:
             tree, source = _parse_file(filepath, self.language)
 
             if tree is None:
-                # Regex fallback remains available when no line-level filtering is used.
-                if self.language == "go" and not self.covered_lines:
+                # Regex fallback for Go
+                if self.language == "go":
                     defs, file_calls = _regex_extract_go(filepath)
-                    definitions_seen += len(defs)
                     for d in defs:
                         graph.definitions.setdefault(d.name, []).append(d)
                     for caller, callees in file_calls.items():
@@ -296,77 +282,27 @@ class CallGraphBuilder:
 
             # Tree-sitter path
             def visit(node):
-                nonlocal definitions_seen
-
                 if node.type not in func_def_types:
                     return
-
                 name = _get_func_name(node, self.language, source)
                 if not name:
                     return
-
-                definitions_seen += 1
                 start_line = node.start_point[0] + 1
-                end_line = node.end_point[0] + 1
-                is_root = (os.path.abspath(filepath), name) in self.always_keep
-
-                # Keep only methods whose source range was executed. The flaky test
-                # root is retained explicitly because standard JaCoCo reports often
-                # omit test classes from the analyzed class directories.
-                if not is_root and not self._range_is_covered(
-                    filepath,
-                    start_line,
-                    end_line,
-                ):
-                    return
-
-                src_text = _node_text(node, source)
-                fd = FuncDef(
-                    name=name,
-                    filepath=filepath,
-                    start_line=start_line,
-                    end_line=end_line,
-                    source=src_text,
-                )
+                end_line   = node.end_point[0] + 1
+                src_text   = _node_text(node, source)
+                fd = FuncDef(name=name, filepath=filepath,
+                             start_line=start_line, end_line=end_line, source=src_text)
                 graph.definitions.setdefault(name, []).append(fd)
-
-                for callee, call_start, call_end in _collect_calls(
-                    node,
-                    self.language,
-                    source,
-                ):
-                    # Runtime-prune call-reference tags too. Calls in the explicitly
-                    # retained test root are kept so BFS can enter the covered graph.
-                    if is_root or self._range_is_covered(
-                        filepath,
-                        call_start,
-                        call_end,
-                    ):
-                        graph.calls.setdefault(name, set()).add(callee)
+                callees = _collect_call_names(node, self.language, source)
+                graph.calls.setdefault(name, set()).update(callees)
 
             _walk(tree.root_node, visit)
 
-        retained = sum(len(v) for v in graph.definitions.values())
-        retained_files = len({
-            definition.filepath
-            for definitions in graph.definitions.values()
-            for definition in definitions
-        })
-
-        if self.covered_lines:
-            logger.info(
-                "Coverage-pruned graph: %d/%d method definitions retained across %d/%d files.",
-                retained,
-                definitions_seen,
-                retained_files,
-                len(self.files),
-            )
-        else:
-            logger.info(
-                "Call graph: %d function definitions across %d files.",
-                retained,
-                len(self.files),
-            )
+        logger.info(
+            "Call graph: %d function definitions across %d files.",
+            sum(len(v) for v in graph.definitions.values()),
+            len(self.files),
+        )
         return graph
 
 

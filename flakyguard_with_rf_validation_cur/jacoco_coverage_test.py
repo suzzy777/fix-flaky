@@ -22,27 +22,13 @@ import shutil
 import subprocess
 import zipfile
 import xml.etree.ElementTree as ET
-from dataclasses import dataclass
 from pathlib import Path
 
 from models import TestInput
 
 logger = logging.getLogger(__name__)
 
-
-@dataclass
-class CoverageData:
-    """Covered source files and their executed source-line numbers."""
-
-    files: list[str]
-    lines_by_file: dict[str, set[int]]
-
-    @classmethod
-    def empty(cls) -> "CoverageData":
-        return cls(files=[], lines_by_file={})
-
-
-_COVERAGE_CACHE: dict[tuple[str, str, str, str], CoverageData] = {}
+_COVERAGE_CACHE: dict[tuple[str, str, str, str], list[str]] = {}
 
 
 
@@ -283,6 +269,20 @@ def _find_jacoco_reports(source_root: Path, module: str) -> list[Path]:
                 reports.append(path)
 
     return reports
+# def _find_jacoco_reports(source_root: Path, module: str) -> list[Path]:
+#     def _find_jacoco_reports(source_root: Path, module: str) -> list[Path]:
+#     reports: list[Path] = []
+
+#     for pattern in [
+#         "flaky-result/coverage/*jacoco*.xml",
+#         "**/target/site/jacoco/jacoco.xml",
+#         "**/*jacoco*.xml",
+#     ]:
+#         for path in source_root.glob(pattern):
+#             if path.is_file() and path not in reports:
+#                 reports.append(path)
+
+#     return reports
 
 def _map_artifact_files_to_repo(files: list[str], artifact_root: Path, repo_root: Path, module: str) -> list[str]:
     """Map covered files from the extracted artifact back to --repo paths."""
@@ -316,51 +316,6 @@ def _map_artifact_files_to_repo(files: list[str], artifact_root: Path, repo_root
 
     return mapped
 
-
-
-def _map_artifact_coverage_to_repo(
-    coverage: CoverageData,
-    artifact_root: Path,
-    repo_root: Path,
-    module: str,
-) -> CoverageData:
-    """Map artifact source paths and covered lines back to the editable repo."""
-    mapped_files = _map_artifact_files_to_repo(
-        coverage.files,
-        artifact_root=artifact_root,
-        repo_root=repo_root,
-        module=module,
-    )
-
-    mapped_lines: dict[str, set[int]] = {}
-    artifact_root_resolved = artifact_root.resolve()
-    module = (module or "").strip().strip("/")
-
-    for artifact_file in coverage.files:
-        source_path = Path(artifact_file).resolve()
-        try:
-            rel = source_path.relative_to(artifact_root_resolved)
-        except ValueError:
-            continue
-
-        candidates = [repo_root / rel]
-        if module and module != ".":
-            rel_s = rel.as_posix()
-            prefix = module + "/"
-            if rel_s.startswith(prefix):
-                candidates.append(repo_root / rel_s[len(prefix):])
-            else:
-                candidates.append(repo_root / module / rel)
-
-        for candidate in candidates:
-            candidate = candidate.resolve()
-            if candidate.is_file():
-                mapped_lines.setdefault(str(candidate), set()).update(
-                    coverage.lines_by_file.get(str(source_path), set())
-                )
-                break
-
-    return CoverageData(files=mapped_files, lines_by_file=mapped_lines)
 
 def _reproflake_issue_dir(test_input: TestInput, row: dict[str, str]) -> Path:
     """Return the data/<issue_id> directory used by the ReproFlake helper."""
@@ -486,12 +441,12 @@ def _run_reproflake_coverage_helper(test_input: TestInput, row: dict[str, str]) 
     return ok
 
 
-def _parse_reports_to_repo_coverage(
+def _parse_reports_to_repo_files(
     test_input: TestInput,
     row: dict[str, str],
     report_paths: list[Path],
-) -> CoverageData:
-    """Parse JaCoCo reports and map covered lines back to the editable repo."""
+) -> list[str]:
+    """Parse JaCoCo reports and map covered files back to the user's --repo."""
     module = row.get("module", "").strip().strip("/")
     issue_dir = _reproflake_issue_dir(test_input, row)
     artifact_source_root = issue_dir / "Flaky"
@@ -507,121 +462,98 @@ def _parse_reports_to_repo_coverage(
         parse_roots.append(repo_root / module)
     parse_roots.append(repo_root)
 
-    repo_lines: dict[str, set[int]] = {}
-    artifact_lines: dict[str, set[int]] = {}
+    artifact_files: list[str] = []
+    repo_files: list[str] = []
+    seen: set[str] = set()
 
     for report_path in report_paths:
         for parse_root in parse_roots:
             if not parse_root.is_dir():
                 continue
-
-            coverage = parse_jacoco_xml(str(report_path), str(parse_root))
-            for file in coverage.files:
+            for file in parse_jacoco_xml(str(report_path), str(parse_root)):
                 path = Path(file).resolve()
-                lines = coverage.lines_by_file.get(str(path), set())
+                s = str(path)
+                if s in seen:
+                    continue
+                seen.add(s)
 
                 if artifact_source_root.is_dir():
                     try:
                         path.relative_to(artifact_source_root.resolve())
-                        artifact_lines.setdefault(str(path), set()).update(lines)
+                        artifact_files.append(s)
                         continue
                     except ValueError:
                         pass
 
                 if path.is_file():
-                    repo_lines.setdefault(str(path), set()).update(lines)
+                    repo_files.append(s)
 
-    if artifact_lines and artifact_source_root.is_dir():
-        mapped = _map_artifact_coverage_to_repo(
-            CoverageData(
-                files=list(artifact_lines),
-                lines_by_file=artifact_lines,
-            ),
-            artifact_root=artifact_source_root,
-            repo_root=repo_root,
-            module=module,
+    if artifact_files and artifact_source_root.is_dir():
+        repo_files.extend(
+            _map_artifact_files_to_repo(
+                artifact_files,
+                artifact_root=artifact_source_root,
+                repo_root=repo_root,
+                module=module,
+            )
         )
-        for file, lines in mapped.lines_by_file.items():
-            repo_lines.setdefault(file, set()).update(lines)
 
-    files = sorted(
-        (file for file in repo_lines if Path(file).is_file()),
-        key=lambda file: len(repo_lines[file]),
-        reverse=True,
-    )
-    return CoverageData(
-        files=files,
-        lines_by_file={file: repo_lines[file] for file in files},
-    )
+    result: list[str] = []
+    seen_result: set[str] = set()
+    for file in repo_files:
+        abs_file = str(Path(file).resolve())
+        if abs_file not in seen_result and Path(abs_file).is_file():
+            seen_result.add(abs_file)
+            result.append(abs_file)
+    return result
 
-def _copy_helper_coverage_to_work_repo(test_input: TestInput, row: dict[str, str]) -> None:
-    issue_id = row.get("issue_id", test_input.repro_issue_id or "").strip()
-    workdir = _script_workdir(test_input)
 
-    helper_root = workdir / "data" / issue_id
-    work_repo_root = workdir / "data" / f"{issue_id}_work_repo" / "Flaky"
+def _collect_reproflake_docker_coverage_files(test_input: TestInput) -> list[str]:
+    """
+    Collect coverage by reusing the same ReproFlake helper/Docker path as reproduction.
 
-    if not helper_root.is_dir() or not work_repo_root.is_dir():
-        return
-
-    dst = work_repo_root / "flaky-result" / "coverage"
-    dst.mkdir(parents=True, exist_ok=True)
-
-    for xml in helper_root.glob("**/*jacoco*.xml"):
-        if xml.is_file():
-            shutil.copy2(xml, dst / xml.name)
-            logger.info("Copied helper JaCoCo XML to work repo: %s", dst / xml.name)
-            
-def _collect_reproflake_docker_coverage(test_input: TestInput) -> CoverageData:
-    """Collect coverage through the same ReproFlake helper path as reproduction."""
+    This intentionally does not build or run a separate Docker image here. The
+    helper scripts already know the correct Docker image, Java version, Maven
+    cache, and coverage_generator.sh setup for each reproduced artifact.
+    """
     row = _read_reproflake_row(test_input)
     if not row:
-        return CoverageData.empty()
+        return []
 
     issue_dir = _reproflake_issue_dir(test_input, row)
+
     report_paths = _find_reproflake_coverage_reports(issue_dir)
-    
     if not report_paths:
         _run_reproflake_coverage_helper(test_input, row)
-        _copy_helper_coverage_to_work_repo(test_input, row)
         report_paths = _find_reproflake_coverage_reports(issue_dir)
 
     if not report_paths:
         logger.warning("No ReproFlake JaCoCo XML reports found under: %s", issue_dir)
-        return CoverageData.empty()
+        return []
 
-    coverage = _parse_reports_to_repo_coverage(test_input, row, report_paths)
+    repo_files = _parse_reports_to_repo_files(test_input, row, report_paths)
 
     # The helper's Docker containers can leave root-owned files in data/<issue_id>.
     _docker_chown(issue_dir)
 
-    if coverage.files:
-        logger.info(
-            "ReproFlake helper coverage selected %d file(s) mapped back to --repo.",
-            len(coverage.files),
-        )
+    if repo_files:
+        logger.info("ReproFlake helper coverage selected %d file(s) mapped back to --repo.", len(repo_files))
     else:
-        logger.warning(
-            "ReproFlake helper coverage produced no files that map back to --repo."
-        )
-    return coverage
+        logger.warning("ReproFlake helper coverage produced no files that map back to --repo.")
+    return repo_files
 
-
-def _covered_line_numbers(sourcefile_elem: ET.Element) -> set[int]:
-    """Return source lines with covered instructions or branches."""
-    covered: set[int] = set()
+def _covered_line_count(sourcefile_elem: ET.Element) -> int:
+    """Count covered lines for a JaCoCo <sourcefile> element."""
+    count = 0
     for line in sourcefile_elem.findall("line"):
         try:
-            line_number = int(line.attrib["nr"])
-            covered_instructions = int(line.attrib.get("ci", "0"))
-            covered_branches = int(line.attrib.get("cb", "0"))
-        except (KeyError, ValueError):
+            ci = int(line.attrib.get("ci", "0"))
+            cb = int(line.attrib.get("cb", "0"))
+        except ValueError:
             continue
-
-        if covered_instructions > 0 or covered_branches > 0:
-            covered.add(line_number)
-
-    return covered
+        if ci > 0 or cb > 0:
+            count += 1
+    return count
 
 
 def _candidate_paths(repo_root: str, package_name: str, filename: str) -> list[str]:
@@ -636,20 +568,23 @@ def _candidate_paths(repo_root: str, package_name: str, filename: str) -> list[s
     ]
 
 
-def parse_jacoco_xml(report_path: str, repo_root: str) -> CoverageData:
-    """Parse JaCoCo XML into covered files and exact executed line numbers."""
+def parse_jacoco_xml(report_path: str, repo_root: str) -> list[str]:
+    """
+    Parse target/site/jacoco/jacoco.xml and return absolute Java files that
+    have at least one covered line.
+    """
     if not os.path.isfile(report_path):
         logger.warning("JaCoCo report not found: %s", report_path)
-        return CoverageData.empty()
+        return []
 
     try:
         tree = ET.parse(report_path)
-    except (ET.ParseError, OSError) as exc:
+    except ET.ParseError as exc:
         logger.warning("Could not parse JaCoCo XML report %s: %s", report_path, exc)
-        return CoverageData.empty()
+        return []
 
     root = tree.getroot()
-    lines_by_file: dict[str, set[int]] = {}
+    covered: list[tuple[str, int]] = []
 
     for package in root.findall("package"):
         package_name = package.attrib.get("name", "").replace("/", ".")
@@ -658,22 +593,25 @@ def parse_jacoco_xml(report_path: str, repo_root: str) -> CoverageData:
             if not filename.endswith(".java"):
                 continue
 
-            covered_lines = _covered_line_numbers(sourcefile)
-            if not covered_lines:
+            covered_lines = _covered_line_count(sourcefile)
+            if covered_lines <= 0:
                 continue
 
             for candidate in _candidate_paths(repo_root, package_name, filename):
                 if os.path.isfile(candidate):
-                    path = os.path.abspath(candidate)
-                    lines_by_file.setdefault(path, set()).update(covered_lines)
+                    covered.append((os.path.abspath(candidate), covered_lines))
                     break
 
-    files = sorted(
-        lines_by_file,
-        key=lambda path: len(lines_by_file[path]),
-        reverse=True,
-    )
-    return CoverageData(files=files, lines_by_file=lines_by_file)
+    # More-covered files first, stable/deduped.
+    covered.sort(key=lambda item: item[1], reverse=True)
+    result: list[str] = []
+    seen: set[str] = set()
+    for path, _ in covered:
+        if path not in seen:
+            seen.add(path)
+            result.append(path)
+
+    return result
 
 
 def _prioritize_coverage_files(test_input: TestInput, files: list[str]) -> list[str]:
@@ -735,138 +673,124 @@ def _prioritize_coverage_files(test_input: TestInput, files: list[str]) -> list[
     return result
 
 
+def _run_old_maven_jacoco_same_docker_way(test_input: TestInput) -> list[str]:
+    """
+    Fallback only: run the old Maven JaCoCo plugin command inside the same
+    extracted ReproFlake work repo, using the prepared Maven cache.
+    """
+    row = _read_reproflake_row(test_input)
+    if not row:
+        return []
 
-def _prioritize_coverage_data(
-    test_input: TestInput,
-    coverage: CoverageData,
-) -> CoverageData:
-    """Apply the existing file limit without losing covered line numbers."""
-    files = _prioritize_coverage_files(test_input, coverage.files)
-    return CoverageData(
-        files=files,
-        lines_by_file={
-            file: set(coverage.lines_by_file.get(file, set()))
-            for file in files
-        },
+    repo_root = Path(test_input.repo_root).resolve()
+
+    # Since repo_root is now data/<issue>_work_repo/Flaky,
+    # the matching Maven cache should be beside it.
+    m2_dir = repo_root.parent / "Flakym2" / ".m2"
+
+    if not m2_dir.is_dir():
+        issue_dir = _reproflake_issue_dir(test_input, row)
+        m2_dir = issue_dir / "Flakym2" / ".m2"
+
+    if not m2_dir.is_dir():
+        logger.warning("Old Maven fallback cannot find Maven cache: %s", m2_dir)
+        return []
+
+    image = _helper_image_for_coverage_fallback(test_input, row)
+    container_name = f"{row.get('issue_id', test_input.repro_issue_id)}_old_jacoco"
+
+    subprocess.run(
+        ["docker", "rm", "-f", container_name],
+        capture_output=True,
+        text=True,
+        check=False,
     )
 
-# def _run_old_maven_jacoco_same_docker_way(test_input: TestInput) -> CoverageData:
-#     """
-#     Fallback only: run the old Maven JaCoCo plugin command inside the same
-#     extracted ReproFlake work repo, using the prepared Maven cache.
-#     """
-#     row = _read_reproflake_row(test_input)
-#     if not row:
-#         return CoverageData.empty()
+    run_cmd = [
+        "docker", "run", "-d",
+        "--name", container_name,
+        "--mount", f"type=bind,source={repo_root},target=/app/source",
+        "--mount", f"type=bind,source={m2_dir.resolve()},target=/root/.m2",
+        image,
+        "tail", "-f", "/dev/null",
+    ]
 
-#     repo_root = Path(test_input.repo_root).resolve()
+    logger.info("Starting old JaCoCo fallback container: %s", " ".join(run_cmd))
+    ok, output = _run_cmd(
+        run_cmd,
+        cwd=str(_script_workdir(test_input)),
+        timeout=test_input.coverage_timeout,
+        shell=False,
+    )
 
-#     # Since repo_root is now data/<issue>_work_repo/Flaky,
-#     # the matching Maven cache should be beside it.
-#     m2_dir = repo_root.parent / "Flakym2" / ".m2"
+    if not ok:
+        logger.warning("Could not start old JaCoCo fallback container. Output tail:\n%s", output[-2000:])
+        return []
 
-#     if not m2_dir.is_dir():
-#         issue_dir = _reproflake_issue_dir(test_input, row)
-#         m2_dir = issue_dir / "Flakym2" / ".m2"
+    old_cmd = _build_coverage_cmd(test_input)
 
-#     if not m2_dir.is_dir():
-#         logger.warning("Old Maven fallback cannot find Maven cache: %s", m2_dir)
-#         return CoverageData.empty()
+    module = row.get("module", "").strip().strip("/")
 
-#     image = _helper_image_for_coverage_fallback(test_input, row)
-#     container_name = f"{row.get('issue_id', test_input.repro_issue_id)}_old_jacoco"
+    if module and module != ".":
+        old_cmd = old_cmd.replace(
+            "mvn -q ",
+            f"mvn -q -pl {shlex.quote(module)} -am ",
+            1,
+        )
 
-#     subprocess.run(
-#         ["docker", "rm", "-f", container_name],
-#         capture_output=True,
-#         text=True,
-#         check=False,
-#     )
+    if "-Dmaven.repo.local=" not in old_cmd:
+        old_cmd = old_cmd.replace(
+            "mvn -q ",
+            "mvn -q -Dmaven.repo.local=/root/.m2/repository ",
+            1,
+        )
 
-#     run_cmd = [
-#         "docker", "run", "-d",
-#         "--name", container_name,
-#         "--mount", f"type=bind,source={repo_root},target=/app/source",
-#         "--mount", f"type=bind,source={m2_dir.resolve()},target=/root/.m2",
-#         image,
-#         "tail", "-f", "/dev/null",
-#     ]
+    if "-Dsurefire.failIfNoSpecifiedTests=" not in old_cmd:
+        old_cmd += " -Dsurefire.failIfNoSpecifiedTests=false"
 
-#     logger.info("Starting old JaCoCo fallback container: %s", " ".join(run_cmd))
-#     ok, output = _run_cmd(
-#         run_cmd,
-#         cwd=str(_script_workdir(test_input)),
-#         timeout=test_input.coverage_timeout,
-#         shell=False,
-#     )
-
-#     if not ok:
-#         logger.warning("Could not start old JaCoCo fallback container. Output tail:\n%s", output[-2000:])
-#         return CoverageData.empty()
-
-#     old_cmd = _build_coverage_cmd(test_input)
-
-#     module = row.get("module", "").strip().strip("/")
-
-#     if module and module != ".":
-#         old_cmd = old_cmd.replace(
-#             "mvn -q ",
-#             f"mvn -q -pl {shlex.quote(module)} -am ",
-#             1,
-#         )
-
-#     if "-Dmaven.repo.local=" not in old_cmd:
-#         old_cmd = old_cmd.replace(
-#             "mvn -q ",
-#             "mvn -q -Dmaven.repo.local=/root/.m2/repository ",
-#             1,
-#         )
-
-#     if "-Dsurefire.failIfNoSpecifiedTests=" not in old_cmd:
-#         old_cmd += " -Dsurefire.failIfNoSpecifiedTests=false"
-
-#     if "-DfailIfNoTests=" not in old_cmd:
-#         old_cmd += " -DfailIfNoTests=false"
+    if "-DfailIfNoTests=" not in old_cmd:
+        old_cmd += " -DfailIfNoTests=false"
         
-#     exec_cmd = [
-#         "docker", "exec",
-#         container_name,
-#         "/bin/bash", "-lc",
-#         f"cd /app/source && {old_cmd}",
-#     ]
+    exec_cmd = [
+        "docker", "exec",
+        container_name,
+        "/bin/bash", "-lc",
+        f"cd /app/source && {old_cmd}",
+    ]
 
-#     logger.info("Running old Maven JaCoCo fallback: %s", " ".join(exec_cmd))
-#     ok, output = _run_cmd(
-#         exec_cmd,
-#         cwd=str(_script_workdir(test_input)),
-#         timeout=test_input.coverage_timeout,
-#         shell=False,
-#     )
+    logger.info("Running old Maven JaCoCo fallback: %s", " ".join(exec_cmd))
+    ok, output = _run_cmd(
+        exec_cmd,
+        cwd=str(_script_workdir(test_input)),
+        timeout=test_input.coverage_timeout,
+        shell=False,
+    )
 
-#     subprocess.run(["docker", "stop", container_name], capture_output=True, text=True, check=False)
-#     subprocess.run(["docker", "rm", container_name], capture_output=True, text=True, check=False)
+    subprocess.run(["docker", "stop", container_name], capture_output=True, text=True, check=False)
+    subprocess.run(["docker", "rm", container_name], capture_output=True, text=True, check=False)
 
-#     if not ok:
-#         logger.warning("Old Maven JaCoCo fallback command failed. Output tail:\n%s", output[-2000:])
+    if not ok:
+        logger.warning("Old Maven JaCoCo fallback command failed. Output tail:\n%s", output[-2000:])
 
-#     parse_root = repo_root / module if module and module != "." else repo_root
-#     report_path = parse_root / "target" / "site" / "jacoco" / "jacoco.xml"
-#     coverage = parse_jacoco_xml(str(report_path), str(parse_root))
+    report_path = repo_root / "target" / "site" / "jacoco" / "jacoco.xml"
+    covered = parse_jacoco_xml(str(report_path), str(repo_root))
 
-#     _docker_chown(repo_root.parent)
-#     return coverage
+    _docker_chown(repo_root.parent)
+    return covered
 
-def collect_jacoco_coverage(test_input: TestInput) -> CoverageData:
-    """Run JaCoCo and return covered files plus exact covered source lines."""
+def collect_jacoco_coverage_files(test_input: TestInput) -> list[str]:
+    """
+    Run JaCoCo coverage if enabled and return covered Java files.
+
+    Results are cached for the process so multiple context attempts do not rerun
+    Maven coverage.
+    """
     if not test_input.use_jacoco_coverage:
-        return CoverageData.empty()
+        return []
 
     if test_input.language.lower() != "java":
-        logger.info(
-            "JaCoCo coverage requested, but language is %s; ignoring.",
-            test_input.language,
-        )
-        return CoverageData.empty()
+        logger.info("JaCoCo coverage requested, but language is %s; ignoring.", test_input.language)
+        return []
 
     cache_key = (
         os.path.abspath(test_input.repo_root),
@@ -879,91 +803,85 @@ def collect_jacoco_coverage(test_input: TestInput) -> CoverageData:
 
     report_path = _resolve_report_path(test_input)
 
-    # Remove stale report so old execution data is not mistaken for this run.
+    # Remove stale report so we do not accidentally use old coverage.
     try:
         if os.path.isfile(report_path):
             os.remove(report_path)
     except OSError:
         pass
 
+    # In the ReproFlake workflow, prefer Docker coverage so Maven uses the
+    # same prepared source/cache style as reproduction and validation. This
+    # avoids local Maven failures from missing historical SNAPSHOT artifacts.
+
+    # if test_input.repro_script and test_input.repro_issue_id:
+    #     try:
+    #         covered = _collect_reproflake_docker_coverage_files(test_input)
+    #     except Exception as exc:
+    #         logger.warning("ReproFlake Docker JaCoCo coverage failed: %s", exc)
+    #         covered = []
+    #     if covered:
+    #         covered = _prioritize_coverage_files(test_input, covered)
+    #         _COVERAGE_CACHE[cache_key] = covered
+    #         return covered
+
+    #     # In ReproFlake mode, do NOT fall back to local Maven. Local builds often
+    #     # fail for historical projects because snapshot dependencies are no longer
+    #     # public. Return empty coverage and let the caller fall back to static scope.
+    #     logger.warning("Docker JaCoCo coverage produced no usable files; skipping local JaCoCo fallback.")
+    #     _COVERAGE_CACHE[cache_key] = []
+    #     return []
+
     if test_input.repro_script and test_input.repro_issue_id:
         try:
-            coverage = _collect_reproflake_docker_coverage(test_input)
+            covered = _collect_reproflake_docker_coverage_files(test_input)
         except Exception as exc:
             logger.warning("ReproFlake jar-based JaCoCo coverage failed: %s", exc)
-            coverage = CoverageData.empty()
-
-        if coverage.files:
-            coverage = _prioritize_coverage_data(test_input, coverage)
-            _COVERAGE_CACHE[cache_key] = coverage
-            return coverage
+            covered = []
+            
+        if covered:
+            covered = _prioritize_coverage_files(test_input, covered)
+            _COVERAGE_CACHE[cache_key] = covered
+            return covered
 
         logger.warning(
-            "ReproFlake jar-based coverage produced no usable XML; "
-            "trying old Maven JaCoCo fallback."
+            "ReproFlake jar-based coverage produced no usable XML; trying old Maven JaCoCo fallback."
         )
 
-        # try:
-        #     coverage = _run_old_maven_jacoco_same_docker_way(test_input)
-        # except Exception as exc:
-        #     logger.warning("Old Maven JaCoCo fallback failed: %s", exc)
-        #     coverage = CoverageData.empty()
+        try:
+            covered = _run_old_maven_jacoco_same_docker_way(test_input)
+        except Exception as exc:
+            logger.warning("Old Maven JaCoCo fallback failed: %s", exc)
+            covered = []
 
-        # coverage = _prioritize_coverage_data(test_input, coverage)
+        covered = _prioritize_coverage_files(test_input, covered)
 
-        # if coverage.files:
-        #     logger.info(
-        #         "Old Maven JaCoCo fallback selected %d file(s) for context.",
-        #         len(coverage.files),
-        #     )
-        # else:
-        #     logger.warning(
-        #         "Both ReproFlake jar coverage and old Maven JaCoCo fallback "
-        #         "failed; using nearby-file scope."
-        #     )
+        if covered:
+            logger.info(
+                "Old Maven JaCoCo fallback selected %d file(s) for context.",
+                len(covered),
+            )
+        else:
+            logger.warning(
+                "Both ReproFlake jar coverage and old Maven JaCoCo fallback failed; using nearby-file scope."
+            )
 
-        # _COVERAGE_CACHE[cache_key] = coverage
-        # return coverage
-        logger.warning(
-            "ReproFlake helper coverage produced no usable XML; using nearby-file scope."
-        )
+        _COVERAGE_CACHE[cache_key] = covered
+        return covered
 
-        coverage = CoverageData.empty()
-        _COVERAGE_CACHE[cache_key] = coverage
-        return coverage
-   
     cmd = _build_coverage_cmd(test_input)
     logger.info("Collecting JaCoCo coverage locally: %s", cmd)
-    ok, output = _run_cmd(
-        cmd,
-        cwd=test_input.repo_root,
-        timeout=test_input.coverage_timeout,
-    )
+    ok, output = _run_cmd(cmd, cwd=test_input.repo_root, timeout=test_input.coverage_timeout)
     if not ok:
-        logger.warning(
-            "JaCoCo coverage command failed; will try to parse any report "
-            "that exists. Output tail:\n%s",
-            output[-2000:],
-        )
+        logger.warning("JaCoCo coverage command failed; will try to parse any report that exists. Output tail:\n%s", output[-2000:])
 
-    coverage = parse_jacoco_xml(report_path, test_input.repo_root)
-    coverage = _prioritize_coverage_data(test_input, coverage)
+    covered = parse_jacoco_xml(report_path, test_input.repo_root)
+    covered = _prioritize_coverage_files(test_input, covered)
 
-    if coverage.files:
-        logger.info(
-            "JaCoCo coverage selected %d file(s) for context.",
-            len(coverage.files),
-        )
+    if covered:
+        logger.info("JaCoCo coverage selected %d file(s) for context.", len(covered))
     else:
-        logger.warning(
-            "JaCoCo coverage produced no usable files; "
-            "falling back to nearby-file scope."
-        )
+        logger.warning("JaCoCo coverage produced no usable files; falling back to nearby-file scope.")
 
-    _COVERAGE_CACHE[cache_key] = coverage
-    return coverage
-
-
-def collect_jacoco_coverage_files(test_input: TestInput) -> list[str]:
-    """Backward-compatible wrapper used by the current pipeline."""
-    return collect_jacoco_coverage(test_input).files
+    _COVERAGE_CACHE[cache_key] = covered
+    return covered

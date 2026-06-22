@@ -53,17 +53,42 @@ for i in $(seq 1 "$iterations"); do
     exit 1
   fi
   xml_out="$module/target/${method_only}_jacoco_${i}.xml"
-  java -jar "$jacoco_cli" report "$destfile" \
-    --classfiles "$module/target/classes" \
-    --classfiles "$module/target/test-classes" \
-    --sourcefiles "$module/src/main/java" \
-    --sourcefiles "$module/src/test/java" \
-    --xml "$xml_out"
+
+  # java -jar "$jacoco_cli" report "$destfile" \
+  #   --classfiles "$module/target/classes" \
+  #   --classfiles "$module/target/test-classes" \
+  #   --sourcefiles "$module/src/main/java" \
+  #   --sourcefiles "$module/src/test/java" \
+  #   --xml "$xml_out"
+
+  if ! java -jar "$jacoco_cli" report "$destfile" \
+  --classfiles "$module/target/classes" \
+  --classfiles "$module/target/test-classes" \
+  --sourcefiles "$module/src/main/java" \
+  --sourcefiles "$module/src/test/java" \
+  --xml "$xml_out"; then
+
+      echo "JAR JaCoCo report failed; trying Maven JaCoCo plugin fallback inside same container..."
+
+      mvn -q -Dmaven.repo.local=/root/.m2/repository \
+	  -pl "$module" -am \
+	  org.jacoco:jacoco-maven-plugin:0.8.12:prepare-agent \
+	  test \
+	  org.jacoco:jacoco-maven-plugin:0.8.12:report \
+	  -Dtest="$full_test_name" \
+	  -Drat.skip=true \
+	  -Dsurefire.failIfNoSpecifiedTests=false \
+	  -DfailIfNoTests=false \
+	  $MVNOPTIONS
+
+      xml_out="$module/target/site/jacoco/jacoco.xml"
+  fi
+  
   python "$dir_to_python_script/python-scripts/parse_coverage.py" "$method_only" "$xml_out"
 
   # Move artifacts for this iteration
   mv "$destfile" flaky-result/coverage/
-  mv "$xml_out" flaky-result/coverage/
+  cp "$xml_out" flaky-result/coverage/
 done
 
 # If your parser produces a CSV, move it

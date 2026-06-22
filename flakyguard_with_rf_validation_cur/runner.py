@@ -101,12 +101,12 @@ def _safe_rmtree(path: Path) -> None:
 
 def _script_repro_iterations() -> int:
     """Iterations for script-based reproduction only. Keep this small/fast."""
-    raw = os.environ.get("FLAKYGUARD_REPRO_ITERATIONS", "10")
+    raw = os.environ.get("FLAKYGUARD_REPRO_ITERATIONS", "1")
     try:
         return max(1, int(raw))
     except ValueError:
-        logger.warning("Invalid FLAKYGUARD_REPRO_ITERATIONS=%r; using 10.", raw)
-        return 10
+        logger.warning("Invalid FLAKYGUARD_REPRO_ITERATIONS=%r; using 1.", raw)
+        return 1
 
 
 # ── Failure parsing ──────────────────────────────────────────────────────────
@@ -493,9 +493,58 @@ def _collect_repro_logs(workdir: str, base_output: str, issue_id: str | None = N
 
     return "".join(parts)
 
+# def _has_failure_markers(output: str, test_type: str = "") -> bool:
+#     """Return True when validation output contains an actual failure."""
+#     test_type = (test_type or "").strip().lower()
 
-def _has_failure_markers(output: str) -> bool:
-    """Return True if script/test output contains clear failure markers."""
+#     common_patterns = [
+#         r"<<< FAILURE!",
+#         r"AssertionFailedError",
+#         r"AssertionError",
+#         r"There are test failures",
+#         r"BUILD FAILURE",
+#         r"Failed to apply patch",
+#         r"Failures:\s*[1-9]",
+#         r"Errors:\s*[1-9]",
+#     ]
+
+#     if any(re.search(pattern, output, re.IGNORECASE) for pattern in common_patterns):
+#         return True
+
+#     if test_type == "nio":
+#         # NIO CSV rows can contain `,failure,` as a configuration label.
+#         # Only trust the actual result stored inside the JSON field.
+#         nio_failure_pattern = (
+#             r'(?:""|")result(?:""|")\s*:\s*'
+#             r'(?:""|")(?:FAIL|FAILURE|ERROR)(?:""|")'
+#         )
+#         return re.search(nio_failure_pattern, output, re.IGNORECASE) is not None
+
+#     # Existing behavior for non-NIO result formats.
+#     return re.search(r",\s*failure\s*,", output, re.IGNORECASE) is not None
+
+def _has_failure_markers(output: str, test_type: str = "") -> bool:
+    test_type = (test_type or "").strip().lower()
+
+    if test_type == "nio":
+        # For NIO, `failure` and `Failures: N` describe the selected
+        # configuration/rows, not necessarily the nested test results.
+        actual_failure_patterns = [
+            r'""result"":""(?:FAIL|FAILURE|ERROR)""',
+            r'"result"\s*:\s*"(?:FAIL|FAILURE|ERROR)"',
+            r"Failed to apply patch",
+            r"BUILD FAILURE",
+            r"COMPILATION ERROR",
+            r"<<< FAILURE!",
+            r"AssertionError",
+            r"AssertionFailedError",
+        ]
+
+        return any(
+            re.search(pattern, output, re.IGNORECASE)
+            for pattern in actual_failure_patterns
+        )
+
     patterns = [
         r"<<< FAILURE!",
         r"AssertionFailedError",
@@ -507,7 +556,51 @@ def _has_failure_markers(output: str) -> bool:
         r"Errors:\s*[1-9]",
         r",\s*failure\s*,",
     ]
-    return any(re.search(pattern, output, re.IGNORECASE) for pattern in patterns)
+
+    return any(
+        re.search(pattern, output, re.IGNORECASE)
+        for pattern in patterns
+    )
+
+
+def _failure_marker_report(output: str, test_type: str = "") -> str:
+    test_type = (test_type or "").strip().lower()
+
+    patterns = [
+        r"<<< FAILURE!",
+        r"AssertionFailedError",
+        r"AssertionError",
+        r"BUILD FAILURE",
+        r"Failures:\s*[1-9]",
+        r"Errors:\s*[1-9]",
+        r'""result"":""(?:FAIL|FAILURE|ERROR)""',
+        r'"result"\s*:\s*"(?:FAIL|FAILURE|ERROR)"',
+    ]
+
+    if test_type != "nio":
+        patterns.append(r",\s*failure\s*,")
+
+    matches = []
+    for line_number, line in enumerate(output.splitlines(), start=1):
+        if any(re.search(pattern, line, re.IGNORECASE) for pattern in patterns):
+            matches.append(f"{line_number:5}: {line}")
+
+    return "\n".join(matches) if matches else "<no marker lines found>"
+
+# def _has_failure_markers(output: str) -> bool:
+#     """Return True if script/test output contains clear failure markers."""
+#     patterns = [
+#         r"<<< FAILURE!",
+#         r"AssertionFailedError",
+#         r"AssertionError",
+#         r"There are test failures",
+#         r"BUILD FAILURE",
+#         r"Failed to apply patch",
+#         r"Failures:\s*[1-9]",
+#         r"Errors:\s*[1-9]",
+#         r",\s*failure\s*,",
+#     ]
+#     return any(re.search(pattern, output, re.IGNORECASE) for pattern in patterns)
 
 
 # ── Validation debug helpers ────────────────────────────────────────────────
@@ -662,25 +755,134 @@ def _collect_logs_from_root(root: Path, base_output: str) -> str:
     return "".join(parts)
 
 
-def _failure_marker_report(output: str, max_hits: int = 30) -> str:
-    """Return exact lines that caused the validation to be considered failing."""
-    marker_re = re.compile(
-        r"<<< FAILURE!|AssertionFailedError|AssertionError|There are test failures|BUILD FAILURE|"
-        r"Failed to apply patch|Failures:\s*[1-9]|Errors:\s*[1-9]|,\s*failure\s*,",
-        re.IGNORECASE,
-    )
-    lines = output.splitlines()
-    hits: list[str] = []
-    for i, line in enumerate(lines, start=1):
-        if marker_re.search(line):
-            start = max(1, i - 2)
-            end = min(len(lines), i + 2)
-            context = "\n".join(f"{j:5d}: {lines[j - 1]}" for j in range(start, end + 1))
-            hits.append(context)
-            if len(hits) >= max_hits:
-                break
-    return "\n\n---\n".join(hits) if hits else "<no marker lines found>"
+# def _failure_marker_report(output: str, max_hits: int = 30) -> str:
+#     """Return exact lines that caused the validation to be considered failing."""
+#     marker_re = re.compile(
+#         r"<<< FAILURE!|AssertionFailedError|AssertionError|There are test failures|BUILD FAILURE|"
+#         r"Failed to apply patch|Failures:\s*[1-9]|Errors:\s*[1-9]|,\s*failure\s*,",
+#         re.IGNORECASE,
+#     )
+#     lines = output.splitlines()
+#     hits: list[str] = []
+#     for i, line in enumerate(lines, start=1):
+#         if marker_re.search(line):
+#             start = max(1, i - 2)
+#             end = min(len(lines), i + 2)
+#             context = "\n".join(f"{j:5d}: {lines[j - 1]}" for j in range(start, end + 1))
+#             hits.append(context)
+#             if len(hits) >= max_hits:
+#                 break
+#     return "\n\n---\n".join(hits) if hits else "<no marker lines found>"
 
+# def _failure_marker_report(output: str, test_type: str = "") -> str:
+#     test_type = (test_type or "").strip().lower()
+
+#     patterns = [
+#         r"<<< FAILURE!",
+#         r"AssertionFailedError",
+#         r"AssertionError",
+#         r"BUILD FAILURE",
+#         r"Failures:\s*[1-9]",
+#         r"Errors:\s*[1-9]",
+#         r'""result"":""(?:FAIL|FAILURE|ERROR)""',
+#         r'"result"\s*:\s*"(?:FAIL|FAILURE|ERROR)"',
+#     ]
+
+#     if test_type != "nio":
+#         patterns.append(r",\s*failure\s*,")
+
+#     matches = []
+#     for line_number, line in enumerate(output.splitlines(), start=1):
+#         if any(re.search(pattern, line, re.IGNORECASE) for pattern in patterns):
+#             matches.append(f"{line_number:5}: {line}")
+
+#     return "\n".join(matches) if matches else "<no marker lines found>"
+
+def _last_count(output: str, label: str) -> int | None:
+    matches = re.findall(
+        rf"^\s*{re.escape(label)}:\s*(\d+)\s*$",
+        output,
+        re.MULTILINE,
+    )
+    return int(matches[-1]) if matches else None
+
+
+def _validation_success_summary(output: str) -> str:
+    summary = []
+
+    if "BUILD SUCCESS" in output:
+        summary.append("Build: PASS")
+
+    # Automatically recognize ID/NonDex validation.
+    if "All tests pass without NonDex shuffling" in output:
+        summary.append("Baseline runs without NonDex shuffling: PASS")
+
+        matches = re.findall(
+            r"^\s*Passes:\s*(\d+)\s*$",
+            output,
+            re.MULTILINE,
+        )
+        if matches:
+            summary.append(f"NonDex shuffled runs passed: {matches[-1]}")
+
+        return "\n".join(summary)
+
+    return "\n".join(summary) or "No success summary found."
+# def _validation_success_summary(
+#     output: str,
+#     test_type: str = "",
+# ) -> str:
+#     """Return a compact validation summary without duplicate Maven lines."""
+#     test_type = (test_type or "").strip().lower()
+#     summary: list[str] = []
+
+#     if "BUILD SUCCESS" in output:
+#         summary.append("Build: PASS")
+#     else:
+#         summary.append("Build: no success marker found")
+
+#     if test_type == "id":
+#         if "All tests pass without NonDex shuffling" in output:
+#             summary.append("Baseline run without NonDex shuffling: PASS")
+
+#         passes = _last_count(output, "Passes")
+#         failures = _last_count(output, "Failures")
+#         errors = _last_count(output, "Errors")
+
+#         if passes is not None:
+#             summary.append(
+#                 "NonDex shuffled runs: "
+#                 f"{passes} passed, "
+#                 f"{failures or 0} failed, "
+#                 f"{errors or 0} errors"
+#             )
+
+#         return "\n".join(summary)
+
+    # For non-ID tests, collapse repeated Surefire summaries.
+    matches = re.findall(
+        r"Tests run:\s*(\d+),\s*"
+        r"Failures:\s*(\d+),\s*"
+        r"Errors:\s*(\d+),\s*"
+        r"Skipped:\s*(\d+)",
+        output,
+    )
+
+    unique_matches = list(dict.fromkeys(matches))
+
+    for tests, failures, errors, skipped in unique_matches:
+        summary.append(
+            f"Surefire: {tests} tests, "
+            f"{failures} failures, "
+            f"{errors} errors, "
+            f"{skipped} skipped"
+        )
+
+    passes = _last_count(output, "Passes")
+    if passes is not None:
+        summary.append(f"Passing validation rounds: {passes}")
+
+    return "\n".join(summary) if summary else "No success summary found."
 
 def _write_validation_debug_log(workdir: str, issue_id: str, text: str, label: str = "Fixed") -> Path:
     debug_dir = Path(workdir) / "flakyguard-validation-debug"
@@ -704,11 +906,13 @@ def _log_fixed_result_summary(base_dir: Path, output: str, returncode: int) -> N
 
     if fixed_result_dir.exists():
         files = [p for p in fixed_result_dir.rglob("*") if p.is_file()]
-        logger.info("[fixed-result] result files under result/Fixed (%d):\n%s", len(files), "\n".join(str(p.relative_to(base_dir)) for p in files[:80]) if files else "<none>")
+        #logger.info("[fixed-result] result files under result/Fixed (%d):\n%s", len(files), "\n".join(str(p.relative_to(base_dir)) for p in files[:80]) if files else "<none>")
         fixed_logs = _collect_logs_from_root(fixed_result_dir, output)
     else:
         # If the helper failed before copying result/Fixed, stdout/stderr is still useful.
         fixed_logs = output
+
+    logger.info("[fixed-result] FULL Fixed stdout/stderr/logs:\n%s", fixed_logs)
 
     logger.info("[fixed-result] important PASS/FAIL lines for Fixed only:\n%s", _failure_marker_report(fixed_logs))
     success_lines = []
@@ -717,9 +921,17 @@ def _log_fixed_result_summary(base_dir: Path, output: str, returncode: int) -> N
             success_lines.append(line)
         if len(success_lines) >= 30:
             break
-    logger.info("[fixed-result] success/test summary lines for Fixed only:\n%s", "\n".join(success_lines) if success_lines else "<none found>")
+    #logger.info("[fixed-result] success/test summary lines for Fixed only:\n%s", "\n".join(success_lines) if success_lines else "<none found>")
+    #test_type = row.get("test_type", "").strip().lower()
 
-
+    # logger.info(
+    #     "[fixed-result] validation summary:\n%s",
+    #     _validation_success_summary(full_output, test_type),
+    # )
+    logger.info(
+        "[fixed-result] validation summary:\n%s",
+        _validation_success_summary(fixed_logs),
+    )
 def _fixed_validation_output(base_dir: Path, helper_output: str) -> str:
     """Return stdout/stderr plus logs copied for the Fixed validation run only."""
     return _collect_logs_from_root(base_dir / "result" / "Fixed", helper_output)
@@ -800,6 +1012,10 @@ def reproduce_failure(test_input: TestInput) -> FlakyInfo | None:
                 error=f"Reproduction script failed with exit code {result.returncode}",
                 error_trace=full_output[:4000],
             )
+
+        logger.info("DEBUG script returncode: %s", result.returncode)
+        logger.info("DEBUG stdout tail:\n%s", result.stdout[-4000:])
+        logger.info("DEBUG stderr tail:\n%s", result.stderr[-4000:])
 
         logger.warning("Script completed but no flaky failure was found in output/logs.")
         return None
@@ -887,7 +1103,7 @@ def validate_fix(test_input: TestInput, runs: int = 10, patch_path: str | None =
 
             if result.returncode != 0:
                 logger.info("Script validation failed with exit code %d", result.returncode)
-                logger.info("Validation stdout/stderr preview:\n%s", output[:3000])
+                logger.info("Validation stdout/stderr preview:\n%s", output)
                 return False
 
             if _has_failure_markers(fixed_output):

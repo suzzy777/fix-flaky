@@ -8,7 +8,7 @@ ITERATIONS=${5:-5}
 CODE_VERSION=${6:-"All"} 
 NONDEXSEED=$7
 
-IMAGE_NAME="flaky_base_jdk_11_id_cover_new"
+IMAGE_NAME="flaky_base_jdk_8_id_cover_new"
 CONTAINER_NAME="$TEST_FOLDER_NAME"
 DIR_TO_PYTHON_SCRIPT="/app/source"
 BASE_DIR="data/${TEST_FOLDER_NAME}"
@@ -44,7 +44,7 @@ if [ -d "$FLAKY_DIR" ]; then
     cp coverage_generator.sh "$FLAKY_DIR/" || { echo "Failed to copy coverage_generator.sh"; exit 1; }
     cp modify_pom_for_coverage.sh "$FLAKY_DIR/" || { echo "Failed to copy modify_pom_for_coverage.sh"; exit 1; }
     cp -r python-scripts "$FLAKY_DIR/" || { echo "Failed to copy Python scripts"; exit 1; }
-    cp id_statistics_generator_11.sh "$FLAKY_DIR/" || { echo "Failed to copy id_statistics_generator_11.sh"; exit 1; }
+    cp id_statistics_generator_8.sh "$FLAKY_DIR/" || { echo "Failed to copy id_statistics_generator_8.sh"; exit 1; }
 else
     echo "Flaky folder does not exist. Skipping scripts deletion and cloning."
    
@@ -96,7 +96,7 @@ esac
 
 mkdir -p "$RESULT_DIR"
 
-docker build -t $IMAGE_NAME -f Dockerfile11.id .
+docker build -t $IMAGE_NAME -f Dockerfile8.id .
 for i in "${!SOURCE_DIRS[@]}"; do
     SRC_DIR="${SOURCE_DIRS[$i]}"
     M2_DIR="${M2_DIRS[$i]}"
@@ -115,7 +115,7 @@ for i in "${!SOURCE_DIRS[@]}"; do
     tail -f /dev/null
 
   docker exec -i "$CONTAINER_NAME" /bin/bash -c \
-  "cd /app/source && chmod +x id_statistics_generator_11.sh && ./id_statistics_generator_11.sh \"$MODULE\" \"$FULL_TEST_NAME\" \"$ITERATIONS\" \"$NONDEXSEED\""
+  "cd /app/source && chmod +x id_statistics_generator_8.sh && ./id_statistics_generator_8.sh \"$MODULE\" \"$FULL_TEST_NAME\" \"$ITERATIONS\" \"$NONDEXSEED\""
     mkdir -p "$FLAKY_RESULT_DIR"
     cp -a "$SRC_DIR/flaky-result/." "$FLAKY_RESULT_DIR/"
     docker stop $CONTAINER_NAME

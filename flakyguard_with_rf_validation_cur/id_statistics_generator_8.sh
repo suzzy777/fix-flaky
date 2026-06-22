@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 set -e
 set -u
 MODULE="$1"   
@@ -29,7 +28,7 @@ fi
 bash ./coverage_generator.sh "$MODULE" . "$TEST" 1 || echo "Coverage failed; continuing"
 
 OUTPUT=$(mvn -pl "$MODULE" edu.illinois:nondex-maven-plugin:2.1.1:nondex \
- $SEED_PARAM -DnondexRuns=$rounds -Dtest="$TEST" $MVNOPTIONS 2>&1 )
+ $SEED_PARAM -DnondexRuns=$rounds -Dtest="$TEST" $MVNOPTIONS 2>&1)
 EXEC_IDS=$(echo "$OUTPUT" | grep "nondexExecid=" | sed -E 's/.*nondexExecid=([^\ ]+).*/\1/')
 SEEDS=$(echo "$OUTPUT" | grep "nondexSeed=" | sed -E 's/.*nondexSeed=([^\ ]+).*/\1/')
 
@@ -92,7 +91,7 @@ error_count=0
 
 while IFS=',' read -r col1 col2 col3 col4 col5 col6; do
     cleaned_result=$(echo "$col5" | xargs)  # trims spaces/newlines
-
+    
     if [[ $cleaned_result == "pass" ]]; then
 	((pass_count+=1))
     elif [[ $cleaned_result == "failure" ]]; then
@@ -101,7 +100,6 @@ while IFS=',' read -r col1 col2 col3 col4 col5 col6; do
         ((error_count+=1))
     fi
 done < <(tail -n +2 "$CSV_FILE")
-
 
 if [[ -d "$ROOT_DIR/$MODULE/.nondex" ]]; then
   cp -r "$ROOT_DIR/$MODULE/.nondex" "flaky-result/"
@@ -125,5 +123,3 @@ summary_file="flaky-result/summary.txt"
 mv $CSV_FILE "flaky-result"
 
 
-#bash ./coverage_generator.sh "$MODULE" . "$TEST" 1
-set+x

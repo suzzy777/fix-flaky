@@ -71,6 +71,21 @@ def strip_filename(filename: str, fence: tuple[str, str]):
 
     return filename or None
 
+def _resolve_fname(fname: str, valid_fnames: list[str]) -> str:
+    fname = fname.strip().replace("\\", "/").lstrip("/")
+
+    if fname in valid_fnames:
+        return fname
+
+    matches = [
+        valid for valid in valid_fnames
+        if valid.replace("\\", "/").endswith(fname)
+    ]
+
+    if len(matches) == 1:
+        return matches[0]
+
+    return fname
 
 def _looks_like_prose(value: str) -> bool:
     """
@@ -298,8 +313,15 @@ def parse_edits(
             valid_fnames=valid or None,
         )
 
+        
+
         for filename, search_text, replace_text in blocks:
+            #filepath = _resolve_fname(filepath or default_filepath, valid_fnames)
+
             filepath = filename or default_filepath
+
+            filepath = _resolve_fname(filepath or default_filepath, valid_fnames)
+            
             edits.append(SearchReplaceEdit(
                 filepath=filepath,
                 search_text=search_text.rstrip("\n"),
@@ -391,9 +413,35 @@ def apply_fix(fix: Fix, repo_root: str) -> tuple[bool, dict[str, FileBackup] | s
         if not os.path.isabs(filepath):
             filepath = os.path.join(repo_root, filepath)
 
+        # if not os.path.isfile(filepath):
+        #     return False, f"File does not exist: {filepath}"
         if not os.path.isfile(filepath):
-            return False, f"File does not exist: {filepath}"
+            original = edit.filepath.replace("\\", "/").lstrip("/")
 
+            matches = []
+            for root, _, files in os.walk(repo_root):
+                for name in files:
+                    candidate = os.path.join(root, name)
+                    rel = os.path.relpath(candidate, repo_root).replace("\\", "/")
+
+                    if rel.endswith(original):
+                        matches.append(candidate)
+
+            if len(matches) == 1:
+                filepath = matches[0]
+                edit.filepath = os.path.relpath(filepath, repo_root)
+                logger.info(
+                    "Resolved shortened patch path %r to %s",
+                    original,
+                    edit.filepath,
+                )
+            else:
+                return False, (
+                    f"File does not exist: {filepath}\n"
+                    f"Could not uniquely resolve short path {original!r}; "
+                    f"matches={len(matches)}"
+                )
+    
         resolved.append((filepath, edit))
 
     # Pre-check all edits before writing anything.

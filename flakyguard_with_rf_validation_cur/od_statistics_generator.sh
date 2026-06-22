@@ -14,6 +14,8 @@ pass_count=0
 fail_count=0
 error_count=0
 
+bash ./coverage_generator.sh "$MODULE" . "$TEST" 1 || echo "Coverage failed; continuing"
+
 for ((i=0; i<iterations; i++)); do
     find . -name "TEST-*.xml" -delete
     set -x
@@ -58,13 +60,17 @@ else
     rm -f rounds-test-results.tmp
 fi
 
+pass_count=0
+fail_count=0
+error_count=0
+
 while IFS=',' read -r col1 col2 col3 col4 col5; do
-    if [[ $col2 == "pass" ]]; then
-        ((pass_count++))
-    elif [[ $col2 == "failure" ]]; then
-        ((fail_count++))
-    elif [[ $col2 == "error" ]]; then
-        ((error_count++))
+    if [[ $cleaned_result == "pass" ]]; then
+	((pass_count+=1))
+    elif [[ $cleaned_result == "failure" ]]; then
+        ((fail_count+=1))
+    elif [[ $cleaned_result == "error" ]]; then
+        ((error_count+=1))
     fi
 done < rounds-test-results.csv
 
@@ -81,5 +87,5 @@ summary_file="flaky-result/summary.txt"
 
 mv rounds-test-results.csv "flaky-result"
 dir_to_python_script="$(pwd)"
-bash ./coverage_generator.sh "$module" "$dir_to_python_script" "$flakytest" 1 
+#bash ./coverage_generator.sh "$module" "$dir_to_python_script" "$flakytest" 1 
 

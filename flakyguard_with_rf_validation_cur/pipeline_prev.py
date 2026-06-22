@@ -19,7 +19,7 @@ import os
 from models import TestInput, FlakyInfo, Context, Fix
 from prompts import get_flaky_test_fixing_prompt, get_flaky_test_thought_prompt, SEARCH_REPLACE_FORMAT
 from graph import CallGraphBuilder, files_near_test
-from jacoco_coverage import collect_jacoco_coverage
+from jacoco_coverage import collect_jacoco_coverage_files
 from smart_search import smart_bfs
 from search_replace import apply_fix, revert_all, parse_fix, write_patch_file
 from llm import complete
@@ -48,35 +48,18 @@ def collect_context(
     """
     test_file_abs = os.path.join(test_input.repo_root, test_input.test_file)
 
-    coverage = collect_jacoco_coverage(test_input)
-    if coverage.files:
-        scope_files = list(coverage.files)
-        covered_lines = coverage.lines_by_file
-        logger.info(
-            "Using JaCoCo coverage scope: %d file(s), %d covered line(s)",
-            len(scope_files),
-            sum(len(lines) for lines in covered_lines.values()),
-        )
+    coverage_files = collect_jacoco_coverage_files(test_input)
+    if coverage_files:
+        scope_files = coverage_files
+        logger.info("Using JaCoCo coverage scope: %d file(s)", len(scope_files))
     else:
-        scope_files = files_near_test(
-            test_file_abs,
-            up_levels=2,
-            language=test_input.language,
-        )
-        covered_lines = {}
+        scope_files = files_near_test(test_file_abs, up_levels=2, language=test_input.language)
         logger.info("Using nearby-file scope: %d file(s)", len(scope_files))
 
-    test_file_abs = os.path.abspath(test_file_abs)
     if test_file_abs not in scope_files:
         scope_files.append(test_file_abs)
 
-    builder = CallGraphBuilder(
-        test_input.repo_root,
-        scope_files,
-        language=test_input.language,
-        covered_lines=covered_lines,
-        always_keep={(test_file_abs, test_input.test_func)},
-    )
+    builder = CallGraphBuilder(test_input.repo_root, scope_files, language=test_input.language)
     graph = builder.build()
 
     problem_statement = (
@@ -224,7 +207,6 @@ def generate_thought(
     context_attempt: int,
     thought_attempt: int,
     total_thoughts: int,
-    failed_thoughts: list[str],
 ) -> str | None:
     """
     Generate the paper-style high-level thought before generating a patch.
@@ -237,18 +219,6 @@ def generate_thought(
         return None
     original_test, simplified_test = snippets
 
-    # prompt = get_flaky_test_thought_prompt(
-    #     simplified_test_code=simplified_test,
-    #     original_test_code=original_test,
-    #     assertion_failures=flaky_info.error,
-    #     error_trace=flaky_info.error_trace,
-    #     code_context=_format_context(context),
-    #     language=test_input.language,
-    #     context_attempt=context_attempt,
-    #     thought_attempt=thought_attempt,
-    #     total_thoughts=total_thoughts,
-    # )
-
     prompt = get_flaky_test_thought_prompt(
         simplified_test_code=simplified_test,
         original_test_code=original_test,
@@ -259,7 +229,6 @@ def generate_thought(
         context_attempt=context_attempt,
         thought_attempt=thought_attempt,
         total_thoughts=total_thoughts,
-        failed_thoughts=failed_thoughts,
     )
 
     response = complete(prompt, temperature=0.2)
@@ -333,8 +302,6 @@ def run_pipeline(
     The legacy `attempts` argument is treated as an alias for M so older
     callers using --attempts still work.
     """
-    failed_thoughts: list[str] = []
-    
     if attempts is not None:
         context_attempts = attempts
 
@@ -374,15 +341,6 @@ def run_pipeline(
                 m,
                 context_attempts,
             )
-            # thought = generate_thought(
-            #     test_input,
-            #     flaky_info,
-            #     context,
-            #     context_attempt=m,
-            #     thought_attempt=p_idx,
-            #     total_thoughts=thoughts_per_context,
-            # )
-            
             thought = generate_thought(
                 test_input,
                 flaky_info,
@@ -390,7 +348,6 @@ def run_pipeline(
                 context_attempt=m,
                 thought_attempt=p_idx,
                 total_thoughts=thoughts_per_context,
-                failed_thoughts=failed_thoughts,
             )
             if thought is None:
                 continue
@@ -440,7 +397,7 @@ def run_pipeline(
 
                 logger.info("  Validation failed – reverting")
                 revert_all(backups)
-            failed_thoughts.append(thought)
+
     return False, (
         "No fix found after "
         f"M={context_attempts}, P={thoughts_per_context}, N={fixes_per_thought} "

@@ -92,8 +92,8 @@ def parse_args():
     parser.add_argument(
         "--repro-timeout",
         type=int,
-        default=1800,
-        help="Timeout in seconds for script-based reproduction/validation (default: 1800)",
+        default=10800,
+        help="Timeout in seconds for script-based reproduction/validation (default: 10800)",
     )
 
     # Coverage-based context narrowing.
@@ -578,10 +578,10 @@ def main():
 
         logger.info("CSV module for this issue: %r", module)
 
-        # if module and module != ".":
-        #     prefix = module + "/"
-        #     if not test_file.startswith(prefix):
-        #         test_file = prefix + test_file
+        if module and module != ".":
+            prefix = module + "/"
+            if not test_file.startswith(prefix):
+                test_file = prefix + test_file
 
     logger.info("Final repo_root used by FlakyGuard: %s", repo_root)
     logger.info("Final test_file used by FlakyGuard: %s", test_file)
@@ -598,7 +598,7 @@ def main():
         repro_config_csv=args.repro_config_csv,
         repro_zip=args.repro_zip or "",
         repro_timeout=args.repro_timeout,
-        script_validation_iterations=10,
+        script_validation_iterations=100,
         use_jacoco_coverage=args.use_jacoco_coverage,
         coverage_cmd=args.coverage_runner or "",
         coverage_report=args.coverage_report,

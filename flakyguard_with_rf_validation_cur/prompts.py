@@ -92,6 +92,7 @@ def get_flaky_test_thought_prompt(
     thought_attempt: int = 1,
     total_thoughts: int = 1,
     best_practices: str | None = None,
+    failed_thoughts: list[str] | None = None,
 ) -> str:
     """
     Generate the paper-style high-level thought prompt.
@@ -102,6 +103,25 @@ def get_flaky_test_thought_prompt(
     """
     best_practices_text = best_practices or DEFAULT_BEST_PRACTICES
 
+    failed_thoughts_section = ""
+
+    if failed_thoughts:
+        failed_thoughts_text = "\n\n".join(
+            f"Failed thought {index + 1}:\n{thought}"
+            for index, thought in enumerate(failed_thoughts)
+        )
+
+        failed_thoughts_section = f"""
+## Previously Attempted Thoughts That Failed
+
+The following strategies did not produce a valid fix:
+
+{failed_thoughts_text}
+
+Do not repeat the same root cause or fixing strategy.
+Propose a substantially different explanation or plan.
+"""
+        
     return f"""You are an expert at diagnosing flaky tests in {language}.
 This is thought attempt {thought_attempt}/{total_thoughts} for context attempt {context_attempt}.
 
@@ -144,6 +164,10 @@ Your task is to produce a high-level fixing thought/plan only. Do NOT produce SE
 - Randomness/generated IDs/hash iteration ordering
 - External dependency, filesystem, network, time, locale, or environment dependency
 - Resource cleanup/isolation issue
+
+
+
+{failed_thoughts_section}
 
 ## Required Output
 
