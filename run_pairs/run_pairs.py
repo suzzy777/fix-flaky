@@ -41,19 +41,20 @@ def run(cmd, cwd=None, log=None):
     print(" ".join(cmd))
     if log:
         with open(log, "w") as f:
-            return subprocess.run(
-                cmd,
-                cwd=cwd,
-                stdout=f,
-                stderr=subprocess.STDOUT,
-                text=True,
-            ).returncode
+            return subprocess.run(cmd, cwd=cwd, stdout=f, stderr=subprocess.STDOUT).returncode
     return subprocess.run(cmd, cwd=cwd).returncode
 
 
 def test_to_surefire(test_name):
     cls, method = test_name.rsplit(".", 1)
     return f"{cls}#{method}"
+
+
+def clean_surefire_reports(surefire_dir):
+    if surefire_dir.exists():
+        for p in surefire_dir.glob("*"):
+            if p.is_file():
+                p.unlink()
 
 
 def parse_surefire_tests(report_dir, out_file):
@@ -86,19 +87,12 @@ def testcase_status(report_dir, full_test_name):
             continue
 
         for tc in root.iter("testcase"):
-            cls = tc.attrib.get("classname")
-            name = tc.attrib.get("name")
-
-            if cls == target_cls and name == target_method:
-                has_failure = tc.find("failure") is not None
-                has_error = tc.find("error") is not None
-                has_skipped = tc.find("skipped") is not None
-
-                if has_failure:
+            if tc.attrib.get("classname") == target_cls and tc.attrib.get("name") == target_method:
+                if tc.find("failure") is not None:
                     return "FAILURE"
-                if has_error:
+                if tc.find("error") is not None:
                     return "ERROR"
-                if has_skipped:
+                if tc.find("skipped") is not None:
                     return "SKIPPED"
                 return "PASS"
 
@@ -134,25 +128,30 @@ def main():
             module_log = out_dir / "module-test.log"
 
             run(
-                [
-                    "mvn",
-                    "-pl",
-                    module,
-                    "-am",
-                    "test",
-                    *MVNOPTIONS,
-                ],
+                ["mvn", "-pl", module, "-am", "test", *MVNOPTIONS],
                 cwd=repo_dir,
                 log=module_log,
             )
 
-            report_dir = repo_dir / module / "target" / "surefire-reports"
+            surefire_dir = repo_dir / module / "target" / "surefire-reports"
             test_list_file = out_dir / "test-list.txt"
 
-            tests = parse_surefire_tests(report_dir, test_list_file)
+            tests = parse_surefire_tests(surefire_dir, test_list_file)
             print(f"Found {len(tests)} tests")
 
             victim_spec = test_to_surefire(victim)
+            victim_alone_log = out_dir / "victim-alone.log"
+
+            clean_surefire_reports(surefire_dir)
+
+            victim_alone_rc = run(
+                ["mvn", "test", f"-Dtest={victim_spec}", "-pl", module, *MVNOPTIONS],
+                cwd=repo_dir,
+                log=victim_alone_log,
+            )
+
+            victim_alone_status = testcase_status(surefire_dir, victim)
+
             results_csv = out_dir / "pair-results.csv"
 
             with open(results_csv, "w", newline="") as rf:
@@ -161,10 +160,13 @@ def main():
                     [
                         "candidate_test",
                         "victim_test",
+                        "victim_alone_status",
+                        "victim_alone_exit_code",
                         "candidate_status",
-                        "victim_status",
-                        "maven_exit_code",
-                        "log",
+                        "victim_status_in_pair",
+                        "pair_maven_exit_code",
+                        "pair_log",
+                        "victim_alone_log",
                     ]
                 )
 
@@ -174,16 +176,11 @@ def main():
 
                     candidate_spec = test_to_surefire(candidate)
                     safe_name = candidate.replace("/", "_").replace(".", "_").replace("#", "_")
-                    log_file = out_dir / f"pair_{safe_name}.log"
+                    pair_log = out_dir / f"pair_{safe_name}.log"
 
-                    # Clean old reports so status is only from this pair run.
-                    surefire_dir = repo_dir / module / "target" / "surefire-reports"
-                    if surefire_dir.exists():
-                        for p in surefire_dir.glob("*"):
-                            if p.is_file():
-                                p.unlink()
+                    clean_surefire_reports(surefire_dir)
 
-                    rc = run(
+                    pair_rc = run(
                         [
                             "mvn",
                             "test",
@@ -194,20 +191,23 @@ def main():
                             *MVNOPTIONS,
                         ],
                         cwd=repo_dir,
-                        log=log_file,
+                        log=pair_log,
                     )
 
                     candidate_status = testcase_status(surefire_dir, candidate)
-                    victim_status = testcase_status(surefire_dir, victim)
+                    victim_pair_status = testcase_status(surefire_dir, victim)
 
                     writer.writerow(
                         [
                             candidate,
                             victim,
+                            victim_alone_status,
+                            victim_alone_rc,
                             candidate_status,
-                            victim_status,
-                            rc,
-                            str(log_file),
+                            victim_pair_status,
+                            pair_rc,
+                            str(pair_log),
+                            str(victim_alone_log),
                         ]
                     )
 
@@ -217,6 +217,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-    
