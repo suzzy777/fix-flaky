@@ -1,0 +1,267 @@
+Try tests from these three projects first from the list, they have info (flaky-list.txt and original-order.txt) in the issue reports:
+
+https://github.com/suzzy777/fix-flaky/blob/main/unfixed_selection/OD_unfixed.csv
+
+https://github.com/apache/dubbo	737f7a7ea67832d7f17517326fb2491d0a086dd7	dubbo-common
+https://github.com/apache/jackrabbit-oak	bd0526a24f221413976281ccbb0df95170fccc76	oak-blob-plugins
+https://github.com/CloudSlang/cloud-slang	2b5914c479984244f656af5c1eed0e081e988d6a	cloudslang-runtime
+
+Steps to run iFixFlakies minimizer
+
+This covers two cases:
+
+Case A: You do NOT have flaky-list.json (or flaky-list.txt) and original-order yet. (You need to detect/reproduce the flaky test again using idflakies to get those two files which are later used by ifixflakies to find polluter)
+Case B: You already have flaky-list.json and original-order and want to run iFixFlakies. (You can use ifixflakies directly to find polluters if you have both of these files from issue report)
+
+Important naming rule:
+- iFixFlakies -Ddt.minimizer.dependent.test uses dot format:
+  package.ClassName.testMethod
+
+============================================================
+0. Build/compile iFixFlakies first
+============================================================
+
+Before using iFixFlakies on a project, build/install iFixFlakies itself.
+
+Go inside the iFixFlakies repo:
+
+cd /path/to/iFixFlakies
+
+Run:
+
+mvn clean install -Dmaven.test.skip=true
+
+Use -Dmaven.test.skip=true because iFixFlakies' own tests may fail with old Surefire/JDK issues.
+You usually only need the tool installed, not its own test suite.
+
+============================================================
+CASE A: If you do NOT have flaky-list.json and original-order
+============================================================
+
+1. Start from the original Maven project
+------------------------------------------------------------
+
+Go to the Maven project under test:
+
+cd /path/to/maven_project
+
+Make sure the repo is clean:
+
+git status
+
+If needed, reset old changes:
+
+git restore .
+git clean -fd
+
+------------------------------------------------------------
+2. Modify the project POMs for iDFlakies
+------------------------------------------------------------
+
+Go inside the iDFlakies repo and run its POM modifier with the Maven project path:
+
+cd /path/to/iDFlakies
+bash pom-modify/modify-project.sh /path/to/maven_project
+
+Example:
+
+cd ~/tools/iDFlakies
+bash pom-modify/modify-project.sh ~/id_fix/ifix_mapper/Mapper
+
+------------------------------------------------------------
+3. Run iDFlakies detection
+------------------------------------------------------------
+
+Go back to the Maven project under test:
+
+cd /path/to/maven_project
+
+Run:
+
+mvn idflakies:detect \
+  -Ddetector.detector_type=random-class-method \
+  -Ddt.randomize.rounds=10 \
+  -Ddt.detector.original_order.all_must_pass=false
+
+This should detect flaky tests and create files under:
+
+.dtfixingtools/
+
+The important files are usually:
+
+.dtfixingtools/flaky-list.json (change flaky-list.txt to json to use with ifixflakies)
+.dtfixingtools/original-order
+
+------------------------------------------------------------
+4. Save the generated iDFlakies inputs somewhere safe
+------------------------------------------------------------
+
+From the Maven project under test:
+
+mkdir -p ~/ifix_inputs
+cp .dtfixingtools/flaky-list.json ~/ifix_inputs/
+cp .dtfixingtools/original-order ~/ifix_inputs/
+
+If the generated file has a slightly different name, copy that file instead.
+
+------------------------------------------------------------
+5. Revert iDFlakies POM changes before switching to iFixFlakies
+------------------------------------------------------------
+
+From the Maven project root:
+
+git restore .
+git clean -fd
+
+Or only revert POM files:
+
+git restore pom.xml '**/pom.xml'
+
+Now continue to Case B.
+
+============================================================
+CASE B: If you already have flaky-list.json and original-order
+============================================================
+
+1. Revert the Maven project back to the original source
+------------------------------------------------------------
+
+From the root of the Maven project under test:
+
+git status
+git restore .
+git clean -fd
+
+If you only want to undo pom.xml changes:
+
+git restore pom.xml '**/pom.xml'
+
+Be careful with git clean -fdx because it can delete ignored/generated files.
+
+------------------------------------------------------------
+2. Install iFixFlakies and apply POM modifications
+------------------------------------------------------------
+
+Build the iFixFlakies plugin within its repository (i.e., running mvn install inside this project's directory)
+
+Run this command INSIDE the iFixFlakies repo:
+
+bash pom-modify/modify-project.sh path_to_maven_project
+
+Example:
+
+cd /path/to/iFixFlakies
+bash pom-modify/modify-project.sh ~/id_fix/ifix_mapper/Mapper
+
+The argument should be the path to the Maven project under test.
+This modifies that project's pom.xml files so iFixFlakies/testrunner can run.
+
+------------------------------------------------------------
+3. If using Java 17+, set JAVA_TOOL_OPTIONS
+------------------------------------------------------------
+
+If you see InaccessibleObjectException, run:
+
+export JAVA_TOOL_OPTIONS="--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED"
+
+Then check:
+
+java -version
+mvn -version
+
+------------------------------------------------------------
+4. Remove the dependent test from original-order if needed
+------------------------------------------------------------
+
+If original-order already contains the OD flaky test, remove it from the original-order.
+The minimizer may append the dependent test itself.
+
+
+------------------------------------------------------------
+5. Run the iFixFlakies minimizer
+------------------------------------------------------------
+
+Run this from the root of the Maven project under test,
+or use -pl <module> for a multi-module project.
+
+Basic command:
+
+mvn testrunner:testplugin \
+  -Ddt.minimizer.flaky.list=/abs/path/flaky-list.json \
+  -Ddt.minimizer.original.order=/abs/path/original-order-no-dependent \
+  -Ddt.minimizer.use.original.order=true \
+  -Ddt.minimizer.dependent.test=package.ClassName.testMethod \
+  -Ddiagnosis.run_detection=false \
+  -Dtestplugin.className=edu.illinois.cs.dt.tools.minimizer.MinimizerPlugin \
+  -Ddt.minimizer.polluters.one_by_one=true
+
+For a multi-module project:
+
+mvn -pl module-name -am testrunner:testplugin \
+  -Ddt.minimizer.flaky.list=/abs/path/flaky-list.json \
+  -Ddt.minimizer.original.order=/abs/path/original-order-no-dependent \
+  -Ddt.minimizer.use.original.order=true \
+  -Ddt.minimizer.dependent.test=package.ClassName.testMethod \
+  -Ddiagnosis.run_detection=false \
+  -Dtestplugin.className=edu.illinois.cs.dt.tools.minimizer.MinimizerPlugin \
+  -Ddt.minimizer.polluters.one_by_one=true
+
+Example:
+
+mvn -pl base -am testrunner:testplugin \
+  -Ddt.minimizer.flaky.list=~/ifix_inputs/flaky-list.json \
+  -Ddt.minimizer.original.order=~/ifix_inputs/original-order-no-dependent \
+  -Ddt.minimizer.use.original.order=true \
+  -Ddt.minimizer.dependent.test=tk.mybatis.mapper.test.ids.TestIds.testSelectByIds \
+  -Ddiagnosis.run_detection=false \
+  -Dtestplugin.className=edu.illinois.cs.dt.tools.minimizer.MinimizerPlugin \
+  -Ddt.minimizer.polluters.one_by_one=true
+
+------------------------------------------------------------
+6. Where to find the polluter
+------------------------------------------------------------
+
+First check terminal output for:
+
+POLLUTER: Found polluter [some.Test.testMethod] for dependent test [victim.Test.testMethod]
+
+Also check output files:
+
+find . -path '*minimized*' -type f
+grep -R "polluter\|polluters\|cleaner\|dependent" -n .dtfixingtools target 2>/dev/null
+
+Usually output is under:
+
+.dtfixingtools/minimized/
+
+If polluters (at the end of the json file) is empty, iFixFlakies did not confirm a polluter.
+This can happen if the failure is not reproducible, replay is invalid,
+the victim is flaky by itself, or multiple tests are needed together.
+
+------------------------------------------------------------
+7. Interpreting verification errors
+------------------------------------------------------------
+
+If you see:
+
+POLLUTER: Found polluter [...]
+
+but later:
+
+Got expected result even without any dependencies!
+
+then iFixFlakies found a candidate polluter, but verification failed.
+Treat it as an unverified polluter candidate unless the final JSON confirms it.
+
+------------------------------------------------------------
+8. Revert POM changes after running
+------------------------------------------------------------
+
+From the Maven project root:
+
+git restore .
+git clean -fd
+
+Or only revert POM files:
+
+git restore pom.xml '**/pom.xml'
