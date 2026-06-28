@@ -14,7 +14,7 @@ pass_count=0
 fail_count=0
 error_count=0
 
-bash ./coverage_generator.sh "$MODULE" . "$flakytest" 1 || echo "Coverage failed; continuing"
+bash ./coverage_generator.sh "$module" . "$flakytest" 1 || echo "Coverage failed; continuing"
 
 for ((i=0; i<iterations; i++)); do
     find . -name "TEST-*.xml" -delete
