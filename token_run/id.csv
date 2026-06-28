@@ -1,0 +1,11 @@
+container,test_type,model,run,final verdict,input_tokens,output_tokens,total_tokens,FlakyGuard
+commonslang1163e17testReflectionHashCodeExcludeFields,id,claude,run 1,PASSED,53897,10163,64060,PASSED
+jsonschemacore7dbae50multipleSchemaDepViolation,id,claude,run 1,PASSED,7757,1861,9618,PASSED
+scimonoscimonoclient7487ec5testCreateDefaultIdentityFilter3,id,claude,run 1,PASSED,14022,1536,15558,PASSED
+fastjson97ee7b6test_for_issue5,id,claude,run 1,PASSED,6454,1519,7973,PASSED
+apollojavaapolloopenapi5344bc4testFindItemsByNamespace,id,claude,run 1,PASSED,10972,1507,12479,PASSED
+crane4jcrane4jcoreb73311aget,,,,,,,,PASSED
+graylog2servergraylog2server27269f2summarizeUsersReturnsListOfUsersIfCurrentUserIsNull,,,,,,,,PASSED
+ednjava2d37e22testPrettyPrinting,,,,,,,,PASSED
+elideelidecore5c39308testHiddenFields,,,,,,,,NOT PASSED
+castlejavaa5e9ef9minimalContextAsJson,,,,,,,,PASSED

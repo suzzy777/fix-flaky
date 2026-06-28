@@ -1,0 +1,16 @@
+test_type,result_container,zip,module,polluter/state setter,flaky_test,iterations,config,java,nondexSeed,url
+nio,hadoopbb6,hadoopbb6,hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core, ,org.apache.hadoop.mapred.TestTaskProgressReporter#testBytesWrittenRespectingLimit,10,All,8,,https://zenodo.org/records/18634501/files/hadoopbb6.zip
+nio,elasticjob0031,elasticjob003,elasticjob-ecosystem/elasticjob-tracing/elasticjob-tracing-rdb, ,org.apache.shardingsphere.elasticjob.tracing.rdb.storage.RDBJobEventStorageTest#assertAddJobStatusTraceEventWhenFailoverWithTaskStagingState,10,All,8,,https://zenodo.org/records/18634501/files/elasticjob003.zip
+nio,quickcheck9a5,quickcheck9a5,core,,com.pholser.junit.quickcheck.PropertyExhaustiveSampleSizeTest#shouldFeedADefaultNumberOfValuesToAProperty,10,All,8,,https://zenodo.org/records/18605131/files/quickcheck9a5.zip
+nio,quickcheckd214,quickcheckd20,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetTest#wrapperShorts,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckd20.zip
+nio,quickcheckc1c72,quickcheckc1c,core,,com.pholser.junit.quickcheck.ShrinkingTest#disablingShrinking,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c1,quickcheckc1c,core,,com.pholser.junit.quickcheck.ComponentizedGeneratorsIsolateConfigurationFromComponentsTest#boxOfFoo,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c3,quickcheckc1c,core,,com.pholser.junit.quickcheck.EnumPropertyParameterTypesTest#whenConstrained,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c4,quickcheckc1c,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetButIncludingAnotherTest#favorValueOf,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c6,quickcheckc1c,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetButIncludingAnotherTest#primitiveDoubles,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c5,quickcheckc1c,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetButIncludingAnotherTest#primitiveChars,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c11,quickcheckc1c,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetButIncludingAnotherTest#strings,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c12,quickcheckc1c,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetButIncludingAnotherTest#wrapperBooleans,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c13,quickcheckc1c,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetButIncludingAnotherTest#wrapperBytes,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c14,quickcheckc1c,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetButIncludingAnotherTest#wrapperChars,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
+nio,quickcheckc1c15,quickcheckc1c,core,,com.pholser.junit.quickcheck.ExhaustingAGivenSetButIncludingAnotherTest#wrapperDoubles,10,All,8,,https://zenodo.org/records/18605131/files/quickcheckc1c.zip
